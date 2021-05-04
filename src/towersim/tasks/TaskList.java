@@ -24,6 +24,55 @@ public class TaskList {
     public TaskList(List<Task> tasks) {
         this.tasks = tasks;
         this.currentTaskIndex = 0;
+        if (tasks.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < tasks.size(); i++) {
+            TaskType currentTask = tasks.get(i).getType();
+            TaskType nextTask;
+            if (tasks.size() > 1) {
+                if (i + 1 >= tasks.size()) {
+                    nextTask = tasks.get(0).getType();
+                }
+                else {
+                    nextTask = tasks.get(i + 1).getType();
+                }
+
+                if (currentTask == TaskType.AWAY) {
+                    if (!(nextTask == TaskType.LAND || nextTask == TaskType.AWAY)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (currentTask == TaskType.LAND) {
+                    if (!(nextTask == TaskType.WAIT || nextTask == TaskType.LOAD)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (currentTask == TaskType.WAIT) {
+                    if (!(nextTask == TaskType.WAIT || nextTask == TaskType.LOAD)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (currentTask == TaskType.LOAD) {
+                    if (!(nextTask == TaskType.TAKEOFF)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (currentTask == TaskType.TAKEOFF) {
+                    if (!(nextTask == TaskType.AWAY)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+            }
+
+            if (!(currentTask == TaskType.AWAY || currentTask == TaskType.WAIT)) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     /**
@@ -106,8 +155,13 @@ public class TaskList {
      * @return
      */
     public String encode() {
-        String encodedString = "";
 
-        return encodedString;
+        StringBuilder encodedString = new StringBuilder();
+        encodedString.append(this.getCurrentTask().encode());
+        for (int i = 1; i < tasks.size(); i++) {
+            encodedString.append("," + this.getNextTask().encode());
+        }
+
+        return String.valueOf(encodedString);
     }
 }

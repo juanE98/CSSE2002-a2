@@ -1,5 +1,6 @@
 package towersim.tasks;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -81,5 +82,66 @@ public class Task {
             return this.type + " at " + this.loadPercent + "%";
         }
         return String.valueOf(this.type);
+    }
+
+    /**
+     * Returns the machine-readable string representation of this task.
+     * If this is a LOAD-type task, the format of the string to return is
+     *
+     * LOAD@loadPercent
+     * where loadPercent is the task's load percentage.
+     * If this is not a LOAD-type task, the format of the string to return is
+     *
+     * TASKTYPE
+     * where TASKTYPE is the name of the task's task type (see Enum.name()).
+     * For example:
+     *
+     * LOAD@20
+     * For example:
+     * WAIT
+     * @return encoded string representation of this task
+     */
+    public String encode() {
+        if (this.type == TaskType.LOAD) {
+            return this.type + "@" + this.loadPercent;
+        }
+        return String.valueOf(this.type);
+    }
+
+    /**
+     * Returns true if and only if this task is equal to the other given task.
+     * For two tasks to be equal, they must have the same task type and load percentage.
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals (Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Task)) {
+            return false;
+        }
+        Task other = (Task) obj;
+        if (other.getType() != this.getType()) {
+            return false;
+        }
+        if (other.getLoadPercent() != this.getLoadPercent()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns the hash code of this task.
+     * Two tasks that are equal according to equals(Object) should have the same hash code.
+     * @return hash code of this task
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getType(), this.getLoadPercent());
     }
 }
