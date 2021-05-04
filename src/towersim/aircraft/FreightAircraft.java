@@ -29,8 +29,9 @@ public class FreightAircraft extends Aircraft {
      * capacity
      * @ass1
      */
+
     public FreightAircraft(String callsign, AircraftCharacteristics characteristics,
-            TaskList tasks, double fuelAmount, int freightAmount) {
+                           TaskList tasks, double fuelAmount, int freightAmount) {
         super(callsign, characteristics, tasks, fuelAmount);
 
         if (freightAmount < 0) {

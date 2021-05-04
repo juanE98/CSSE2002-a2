@@ -91,4 +91,23 @@ public class TaskList {
                 this.currentTaskIndex + 1,
                 this.tasks.size());
     }
+
+    /**
+     * Returns the machine-readable string representation of this task list.
+     * The format of the string to return is
+     *
+     * encodedTask1,encodedTask2,...,encodedTaskN
+     * where encodedTaskX is the encoded representation of the Xth task in the task list, for  X
+     * between 1 and N inclusive, where N is the number of tasks in the task list and
+     * encodedTask1  represents the current task.
+     * For example, for a task list with 6 tasks and a current task of WAIT:
+     *
+     * WAIT,LOAD@75,TAKEOFF,AWAY,AWAY,LAND
+     * @return
+     */
+    public String encode() {
+        String encodedString = "";
+
+        return encodedString;
+    }
 }
