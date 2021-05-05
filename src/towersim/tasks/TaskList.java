@@ -30,47 +30,47 @@ public class TaskList {
         for (int i = 0; i < tasks.size(); i++) {
             TaskType currentTask = tasks.get(i).getType();
             TaskType nextTask;
-            if (tasks.size() > 1) {
-                if (i + 1 >= tasks.size()) {
-                    nextTask = tasks.get(0).getType();
-                }
-                else {
-                    nextTask = tasks.get(i + 1).getType();
-                }
-
-                if (currentTask == TaskType.AWAY) {
-                    if (!(nextTask == TaskType.LAND || nextTask == TaskType.AWAY)) {
-                        throw new IllegalArgumentException();
-                    }
-                }
-
-                if (currentTask == TaskType.LAND) {
-                    if (!(nextTask == TaskType.WAIT || nextTask == TaskType.LOAD)) {
-                        throw new IllegalArgumentException();
-                    }
-                }
-
-                if (currentTask == TaskType.WAIT) {
-                    if (!(nextTask == TaskType.WAIT || nextTask == TaskType.LOAD)) {
-                        throw new IllegalArgumentException();
-                    }
-                }
-
-                if (currentTask == TaskType.LOAD) {
-                    if (!(nextTask == TaskType.TAKEOFF)) {
-                        throw new IllegalArgumentException();
-                    }
-                }
-
-                if (currentTask == TaskType.TAKEOFF) {
-                    if (!(nextTask == TaskType.AWAY)) {
-                        throw new IllegalArgumentException();
-                    }
+            if (tasks.size() <= 1) {
+                if (!(currentTask == TaskType.AWAY || currentTask == TaskType.WAIT)) {
+                    throw new IllegalArgumentException();
                 }
             }
 
-            if (!(currentTask == TaskType.AWAY || currentTask == TaskType.WAIT)) {
-                throw new IllegalArgumentException();
+            if (i + 1 >= tasks.size()) {
+                nextTask = tasks.get(0).getType();
+            }
+            else {
+                nextTask = tasks.get(i + 1).getType();
+            }
+
+            if (currentTask == TaskType.AWAY) {
+                if (!(nextTask == TaskType.LAND || nextTask == TaskType.AWAY)) {
+                    throw new IllegalArgumentException();
+                }
+            }
+
+            if (currentTask == TaskType.LAND) {
+                if (!(nextTask == TaskType.WAIT || nextTask == TaskType.LOAD)) {
+                    throw new IllegalArgumentException();
+                }
+            }
+
+            if (currentTask == TaskType.WAIT) {
+                if (!(nextTask == TaskType.WAIT || nextTask == TaskType.LOAD)) {
+                    throw new IllegalArgumentException();
+                }
+            }
+
+            if (currentTask == TaskType.LOAD) {
+                if (!(nextTask == TaskType.TAKEOFF)) {
+                    throw new IllegalArgumentException();
+                }
+            }
+
+            if (currentTask == TaskType.TAKEOFF) {
+                if (!(nextTask == TaskType.AWAY)) {
+                    throw new IllegalArgumentException();
+                }
             }
         }
     }
@@ -152,16 +152,15 @@ public class TaskList {
      * For example, for a task list with 6 tasks and a current task of WAIT:
      *
      * WAIT,LOAD@75,TAKEOFF,AWAY,AWAY,LAND
-     * @return
+     * @return encoded string representation of this task list
      */
     public String encode() {
-
         StringBuilder encodedString = new StringBuilder();
         encodedString.append(this.getCurrentTask().encode());
         for (int i = 1; i < tasks.size(); i++) {
-            encodedString.append("," + this.getNextTask().encode());
+            encodedString.append(",").append(this.getNextTask().encode());
         }
-
         return String.valueOf(encodedString);
     }
+
 }

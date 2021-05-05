@@ -104,6 +104,46 @@ public class ControlTower implements Tickable {
     }
 
     /**
+     * Returns the number of ticks that have elapsed for this control tower.
+     * If the control tower was created with a non-zero number of elapsed ticks,  this number
+     * should be taken into account in the return value of this method.
+     *
+     * For example, if the control tower was created with 5 ticks elapsed, and tick()  has been
+     * called three times since creation, then this method should return 8.
+     * @return number of ticks elapsed
+     */
+    public long getTicksElapsed() {
+        return 0;
+    }
+
+    /**
+     * Returns the queue of aircraft waiting to land.
+     * @return landing queue
+     */
+    public AircraftQueue getLandingQueue() {
+        return null;
+    }
+
+    /**
+     * Returns the queue of aircraft waiting to take off.
+     * @return takeoff queue
+     */
+    public AircraftQueue getTakeoffQueue(){
+        return null;
+    }
+
+    /**
+     * Returns the mapping of loading aircraft to their remaining load times.
+     * @return loading aircraft map
+     */
+    public Map<Aircraft,Integer> getLoadingAircraft() {
+
+        return null;
+    }
+
+
+
+    /**
      * Attempts to find an unoccupied gate in a compatible terminal for the given aircraft.
      * <p>
      * Only terminals of the same type as the aircraft's AircraftType (see
