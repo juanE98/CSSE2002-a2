@@ -251,10 +251,9 @@ public abstract class Terminal implements EmergencyState, OccupancyLevel {
      */
     public String encode() {
         StringBuilder encodedString = new StringBuilder();
-        String firstLine = String.format("%s:%d:%s:%d", this.getClass().getSimpleName(),
+        encodedString.append(String.format("%s:%d:%s:%d", this.getClass().getSimpleName(),
                 this.getTerminalNumber(),
-                this.emergency, this.gates.size());
-        encodedString.append(firstLine);
+                this.emergency, this.gates.size()));
         for (Gate gate : this.gates) {
             encodedString.append(System.lineSeparator()).append(gate.encode());
         }
