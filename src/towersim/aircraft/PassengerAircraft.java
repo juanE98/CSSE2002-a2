@@ -51,6 +51,16 @@ public class PassengerAircraft extends Aircraft {
     }
 
     /**
+     * Unloads the aircraft of all cargo (passengers/freight) it is currently carrying.
+     * This action should be performed instantly. After calling unload(), OccupancyLevel
+     * .calculateOccupancyLevel()  should return 0 to indicate that the aircraft is empty.
+     */
+    @Override
+    public void unload() {
+        this.numPassengers = 0;
+    }
+
+    /**
      * Returns the total weight of the aircraft in its current state.
      * <p>
      * The total weight for a passenger aircraft is calculated as the sum of:
@@ -162,5 +172,25 @@ public class PassengerAircraft extends Aircraft {
             this.numPassengers = Math.min(this.numPassengers + paxToLoadThisTick,
                     this.getCharacteristics().passengerCapacity);
         }
+    }
+
+    /**
+     * Returns the machine-readable string representation of this passenger aircraft.
+     * The format of the string to return is
+     *
+     * callsign:model:taskListEncoded:fuelAmount:emergency:numPassengers
+     * where:
+     * callsign is the aircraft's callsign
+     * model is the Enum.name() of the aircraft's AircraftCharacteristics
+     * taskListEncoded is the encode() representation of the aircraft's task list (see TaskList.encode())
+     * fuelAmount is the aircraft's current amount of fuel onboard, formatted to exactly two (2) decimal places
+     * emergency is whether or not the aircraft is currently in a state of emergency
+     * numPassengers is the number of passengers currently onboard the aircraft
+     * For example:
+     * ABC123:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,LOAD@50,TAKEOFF,AWAY:3250.00:false:76
+     * @return
+     */
+    public String encode() {
+        return super.encode() + String.format(":%d", this.numPassengers);
     }
 }

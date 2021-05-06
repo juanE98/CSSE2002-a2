@@ -98,6 +98,16 @@ public class FreightAircraft extends Aircraft {
     }
 
     /**
+     * Unloads the aircraft of all cargo (passengers/freight) it is currently carrying.
+     * This action should be performed instantly. After calling unload(),  OccupancyLevel
+     * .calculateOccupancyLevel()  should return 0 to indicate that the aircraft is empty.
+     */
+    @Override
+    public void unload() {
+        this.freightAmount = 0;
+    }
+
+    /**
      * Returns the ratio of freight cargo onboard to maximum available freight capacity as a
      * percentage between 0 and 100.
      * <p>
@@ -164,5 +174,26 @@ public class FreightAircraft extends Aircraft {
             this.freightAmount = Math.min(this.freightAmount + freightToLoadThisTick,
                     this.getCharacteristics().freightCapacity);
         }
+    }
+
+    /**
+     * Returns the machine-readable string representation of this freight aircraft.
+     * The format of the string to return is
+     *
+     * callsign:model:taskListEncoded:fuelAmount:emergency:freightAmount
+     * where:
+     * callsign is the aircraft's callsign
+     * model is the Enum.name() of the aircraft's AircraftCharacteristics
+     * taskListEncoded is the encode() representation of the aircraft's task list (see TaskList.encode())
+     * fuelAmount is the aircraft's current amount of fuel onboard, formatted to exactly two (2) decimal places
+     * emergency is whether or not the aircraft is currently in a state of emergency
+     * freightAmount is the amount of freight currently onboard
+     * For example:
+     * ABC123:BOEING_747_8F:AWAY,AWAY,LAND,WAIT,LOAD@50,TAKEOFF,AWAY:3250.00:false:86300
+     * @return encoded string representation of this aircraft
+     */
+    @Override
+    public String encode() {
+        return super.encode() + String.format(":%d", this.freightAmount);
     }
 }

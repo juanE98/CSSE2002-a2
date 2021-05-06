@@ -39,6 +39,10 @@ public class AircraftTest {
         }
 
         @Override
+        public void unload() {
+        }
+
+        @Override
         public int calculateOccupancyLevel() {
             return 0;
         }
@@ -278,5 +282,21 @@ public class AircraftTest {
         passengerAircraft1.clearEmergency();
         assertFalse("hasEmergency() should return false after calling clearEmergency()",
                 passengerAircraft1.hasEmergency());
+    }
+
+    @Test
+    public void hashCodeTest() {
+        PassengerAircraft compareAircraft = new PassengerAircraft("ABC123",
+                AircraftCharacteristics.AIRBUS_A320,
+                taskList1,
+                AircraftCharacteristics.AIRBUS_A320.fuelCapacity,
+                AircraftCharacteristics.AIRBUS_A320.passengerCapacity);
+        assertEquals(compareAircraft.hashCode(), this.passengerAircraft1.hashCode());
+    }
+
+    @Test
+    public void encodeTest() {
+        assertEquals("ABC123:AIRBUS_A320:AWAY,LAND,LOAD@0,TAKEOFF:27200.00:false:150",
+                passengerAircraft1.encode());
     }
 }

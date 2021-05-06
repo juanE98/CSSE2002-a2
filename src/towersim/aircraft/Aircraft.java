@@ -6,6 +6,7 @@ import towersim.util.EmergencyState;
 import towersim.util.OccupancyLevel;
 import towersim.util.Tickable;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -147,6 +148,13 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
     public abstract int getLoadingTime();
 
     /**
+     * Unloads the aircraft of all cargo (passengers/freight) it is currently carrying.
+     * This action should be performed instantly. After calling unload(), OccupancyLevel.calculateOccupancyLevel()
+     * should return 0 to indicate that the aircraft is empty.
+     */
+    public abstract void unload();
+
+    /**
      * Updates the aircraft's state on each tick of the simulation.
      * <p>
      * Aircraft burn fuel while flying. If the aircraft's current task is {@code AWAY}, the amount
@@ -184,6 +192,43 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
     }
 
     /**
+     * Returns true if and only if this aircraft is equal to the other given aircraft.
+     * For two aircraft to be equal, they must:
+     *
+     * have the same callsign
+     * have the same characteristics (AircraftCharacteristics)
+     * @param obj other object to check equality
+     * @return true if equal, false otherwise
+     */
+    @Override
+    public boolean equals (Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        Aircraft other = (Aircraft) obj;
+        if (this.getCallsign() != other.getCallsign()) {
+            return false;
+        }
+        if (this.getCharacteristics() != other.getCharacteristics()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns the hash code of this aircraft.
+     * Two aircraft that are equal according to equals(Object) should have the same hash code.
+     * @return hash code of this aircraft
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.callsign, this.getCharacteristics());
+    }
+
+    /**
      * Returns the human-readable string representation of this aircraft.
      * <p>
      * The format of the string to return is
@@ -208,6 +253,26 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
                 this.characteristics,
                 this.tasks.getCurrentTask().getType(),
                 this.emergency ? " (EMERGENCY)" : "");
+    }
+
+    /**
+     * Returns the machine-readable string representation of this aircraft.
+     * The format of the string to return is
+     *
+     * callsign:model:taskListEncoded:fuelAmount:emergency
+     * where:
+     * callsign is the aircraft's callsign
+     * model is the Enum.name() of the aircraft's AircraftCharacteristics
+     * taskListEncoded is the encode() representation of the aircraft's task list (see TaskList.encode())
+     * fuelAmount is the aircraft's current amount of fuel onboard, formatted to exactly two (2) decimal places
+     * emergency is whether or not the aircraft is currently in a state of emergency
+     * For example:
+     * ABC123:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,LOAD@50,TAKEOFF,AWAY:3250.00:false
+     * @return encoded string representation of this aircraft
+     */
+    public String encode() {
+        return String.format("%s:%s:%s:%.2f:%s",this.getCallsign(), this.characteristics.name(),
+                getTaskList().encode(), this.getFuelAmount(), this.emergency);
     }
 
     /**

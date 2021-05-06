@@ -8,8 +8,7 @@ import towersim.tasks.TaskType;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class FreightAircraftTest {
     private TaskList taskList1;
@@ -179,5 +178,21 @@ public class FreightAircraftTest {
 
         // (110,000kg + 2 * 20,664kg) / capacity = 109.85 percent occupancy (should cap at 100)
         assertEquals(failMsg, 100, fullAircraft.calculateOccupancyLevel());
+    }
+
+    @Test
+    public void unloadTest() {
+        this.fullAircraft.unload();
+        assertTrue(this.fullAircraft.calculateOccupancyLevel() == 0);
+    }
+
+    @Test
+    public void encodeTest() {
+        this.aircraft1 = new FreightAircraft("ABC001", AircraftCharacteristics.BOEING_747_8F,
+                taskList1,
+                AircraftCharacteristics.BOEING_747_8F.fuelCapacity * 0.6,
+                AircraftCharacteristics.BOEING_747_8F.freightCapacity);
+        assertEquals("ABC001:BOEING_747_8F:LOAD@0,TAKEOFF,AWAY,LAND:135670.20:false:137756",
+                this.aircraft1.encode());
     }
 }
