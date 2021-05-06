@@ -3,6 +3,8 @@ package towersim.ground;
 import towersim.aircraft.Aircraft;
 import towersim.util.NoSpaceException;
 
+import java.util.Objects;
+
 /**
  * Represents an aircraft gate with facilities for a single aircraft to be parked.
  * @ass1
@@ -89,6 +91,44 @@ public class Gate {
     }
 
     /**
+     * Returns true if and only if this gate is equal to the other given gate.
+     * For two gates to be equal, they must have the same gate number.
+     * @param obj other object to check equality
+     * @return true if equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Gate)) {
+            return false;
+        }
+        Gate other = (Gate) obj;
+        if (this.getGateNumber() != other.getGateNumber()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns the hash code of this gate.
+     * Two gates that are equal according to equals(Object) should have the same hash code.
+     * @return hash code of this gate
+     */
+    @Override
+    public int hashCode(){
+        int aircraftHash = 0;
+        if (this.getAircraftAtGate() != null) {
+            aircraftHash = this.getAircraftAtGate().hashCode();
+        }
+        return Objects.hash(this.getGateNumber(), aircraftHash);
+    }
+
+    /**
      * Returns the human-readable string representation of this gate.
      * <p>
      * The format of the string to return is
@@ -106,5 +146,26 @@ public class Gate {
         return String.format("Gate %d [%s]",
                 this.gateNumber,
                 (aircraftAtGate == null ? "empty" : aircraftAtGate.getCallsign()));
+    }
+
+    /**
+     * Returns the machine-readable string representation of this gate.
+     * The format of the string to return is
+     *
+     * gateNumber:callsign
+     * where
+     * gateNumber is the gate number of this gate
+     * callsign is the callsign of the aircraft parked at this gate, or empty if the gate is unoccupied
+     * For example:
+     * 12:ABC102
+     * For example:
+     * 8:empty
+     * @return encoded string representation of this gate
+     */
+    public String encode() {
+        if (this.getAircraftAtGate() == null) {
+            return String.format("%d:empty", this.gateNumber);
+        }
+        return String.format("%d:%s", this.gateNumber,this.getAircraftAtGate().getCallsign());
     }
 }

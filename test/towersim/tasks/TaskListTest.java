@@ -146,6 +146,6 @@ public class TaskListTest {
                 new Task(TaskType.WAIT),
                 new Task(TaskType.LOAD),
                 new Task(TaskType.TAKEOFF)));
-        assertEquals("AWAY,AWAY,LAND,WAIT,WAIT,LOAD,TAKEOFF", list.encode());
+        assertEquals("AWAY,AWAY,LAND,WAIT,WAIT,LOAD@0,TAKEOFF", list.encode());
     }
 }

@@ -140,7 +140,40 @@ public class GateTest {
         } catch (NoSpaceException e) {
             fail("parkAircraft() should not throw an exception if the gate is unoccupied");
         }
-
         assertEquals("Gate 2 [XYZ987]", gate.toString());
+    }
+
+    @Test
+    public void equalsTest() {
+        assertTrue(new Gate(1).equals(new Gate(1)));
+        assertTrue(new Gate(2).equals(this.gate));
+        assertFalse(new Gate(3).equals(new Gate(4)));
+    }
+
+    @Test
+    public void hashCodeTest() {
+        assertEquals(new Gate(2).hashCode(), this.gate.hashCode());
+        Gate gateCompare = new Gate(2);
+        try {
+            gateCompare.parkAircraft(aircraft1);
+        } catch (NoSpaceException e) {
+        }
+        assertNotEquals(gateCompare.hashCode(), this.gate.hashCode());
+        try {
+            this.gate.parkAircraft(aircraft1);
+        } catch (NoSpaceException e) {
+        }
+        assertEquals(gateCompare.hashCode(), this.gate.hashCode());
+    }
+
+    @Test
+    public void encodeTest() {
+        assertEquals("2:empty",this.gate.encode());
+        try {
+            this.gate.parkAircraft(aircraft1);
+        } catch (NoSpaceException e) {
+
+        }
+        assertEquals("2:ABC123", this.gate.encode());
     }
 }

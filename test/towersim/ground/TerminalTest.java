@@ -265,4 +265,14 @@ public class TerminalTest {
         helicopterTerminal.declareEmergency();
         assertEquals("HelicopterTerminal 2, 3 gates (EMERGENCY)", helicopterTerminal.toString());
     }
+
+    @Test
+    public void encodeTest() throws NoSpaceException {
+        this.airplaneTerminal.addGate(gate1);
+        this.gate2.parkAircraft(aircraft);
+        this.airplaneTerminal.addGate(gate2);
+        assertEquals("AirplaneTerminal:1:false:2" + System.lineSeparator() + "1:empty" +
+                        System.lineSeparator() + "2:ABC123",
+                this.airplaneTerminal.encode());
+    }
 }

@@ -7,6 +7,7 @@ import towersim.util.OccupancyLevel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents an airport terminal building, containing several aircraft gates.
@@ -160,6 +161,43 @@ public abstract class Terminal implements EmergencyState, OccupancyLevel {
     }
 
     /**
+     * Returns true if and only if this terminal is equal to the other given terminal.
+     * For two terminals to be equal, they must:
+     *
+     * be the same type (i.e. the same concrete subclass of Terminal)
+     * have the same terminal number
+     * @param obj other object to check equality
+     * @return true if equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Terminal)) {
+            return false;
+        }
+        Terminal other = (Terminal) obj;
+        if (this.getTerminalNumber() != other.getTerminalNumber()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns the hash code of this terminal.
+     * Two terminals that are equal according to equals(Object) should have the same hash code.
+     * @return hash code of this terminal
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getClass(), this.getTerminalNumber());
+    }
+
+    /**
      * Returns the human-readable string representation of this terminal.
      * <p>
      * The format of the string to return is
@@ -185,5 +223,41 @@ public abstract class Terminal implements EmergencyState, OccupancyLevel {
                 this.terminalNumber,
                 this.gates.size(),
                 this.emergency ? " (EMERGENCY)" : "");
+    }
+
+    /**
+     * Returns the machine-readable string representation of this terminal.
+     * The format of the string to return is
+     *
+     * TerminalType:terminalNumber:emergency:numGates
+     * encodedGate1
+     * encodedGate2
+     * ...
+     * encodedGateN
+     * where
+     * TerminalType is the simple class name of this terminal, e.g. AirplaneTerminal
+     * terminalNumber is the terminal number of this terminal
+     * emergency is whether or not this terminal is in a state of emergency
+     * numGates is the number of gates in this terminal
+     * encodedGateX is the encoded representation of the Xth gate in this terminal, for X between 1 and N inclusive, where N is the number of gates, in the same order as returned by getGates()
+     * For example:
+     * HelicopterTerminal:3:false:0
+     * For example:
+     * AirplaneTerminal:1:true:3
+     * 1:empty
+     * 2:ABC123
+     * 3:empty
+     * @return encoded string representation of this terminal
+     */
+    public String encode() {
+        StringBuilder encodedString = new StringBuilder();
+        String firstLine = String.format("%s:%d:%s:%d", this.getClass().getSimpleName(),
+                this.getTerminalNumber(),
+                this.emergency, this.gates.size());
+        encodedString.append(firstLine);
+        for (Gate gate : this.gates) {
+            encodedString.append(System.lineSeparator()).append(gate.encode());
+        }
+        return String.valueOf(encodedString);
     }
 }
