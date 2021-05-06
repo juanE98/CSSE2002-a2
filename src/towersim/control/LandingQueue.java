@@ -15,7 +15,7 @@ public class LandingQueue extends AircraftQueue {
      * Constructs a new LandingQueue with an initially empty queue of aircraft.
      */
     public LandingQueue() {
-
+        
     }
 
     @Override
@@ -24,14 +24,16 @@ public class LandingQueue extends AircraftQueue {
     }
 
     @Override
-    public Aircraft removeAircraft() {
+    public Aircraft peekAircraft() {
         return null;
     }
 
     @Override
-    public Aircraft peekAircraft() {
+    public Aircraft removeAircraft() {
         return null;
     }
+
+
 
     @Override
     public List<Aircraft> getAircraftInOrder() {

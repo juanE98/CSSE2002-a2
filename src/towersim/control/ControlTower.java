@@ -136,7 +136,7 @@ public class ControlTower implements Tickable {
      * Returns the mapping of loading aircraft to their remaining load times.
      * @return loading aircraft map
      */
-    public Map<Aircraft,Integer> getLoadingAircraft() {
+    public Map<Aircraft, Integer> getLoadingAircraft() {
 
         return null;
     }

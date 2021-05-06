@@ -64,8 +64,8 @@ public abstract class AircraftQueue implements Encodable {
      */
     @Override
     public String toString() {
-
-        return null;
+        String aircrafts = this.callsignList();
+        return String.format("%s [%s]", this.getClass().getSimpleName(), aircrafts);
     }
 
     /**
@@ -87,10 +87,24 @@ public abstract class AircraftQueue implements Encodable {
      * @return encoded string representation of this aircraft queue
      */
     public String encode() {
-
-        return null;
+        StringBuilder encodedString = new StringBuilder();
+        encodedString.append(this.getClass().getSimpleName()).append(":").append(this.getAircraftInOrder().size());
+        encodedString.append(System.lineSeparator());
+        encodedString.append(this.callsignList());
+        return String.valueOf(encodedString);
     }
 
-
-
+    public String callsignList() {
+        StringBuilder aircraftsCallsign = new StringBuilder();
+        List<Aircraft> aircraftInOrder = this.getAircraftInOrder();
+        if (aircraftInOrder != null) {
+            for (Aircraft aircraft : aircraftInOrder) {
+                aircraftsCallsign.append(aircraft.getCallsign()).append(",");
+            }
+            if (aircraftsCallsign.length() > 0) {
+                aircraftsCallsign.deleteCharAt(aircraftsCallsign.length() - 1);
+            }
+        }
+        return String.valueOf(aircraftsCallsign);
+    }
 }
