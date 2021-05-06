@@ -102,7 +102,7 @@ public class Task {
      * @return encoded string representation of this task
      */
     public String encode() {
-        if (this.type == TaskType.LOAD) {
+        if (this.type == TaskType.LOAD && this.loadPercent > 0) {
             return this.type + "@" + this.loadPercent;
         }
         return String.valueOf(this.type);

@@ -136,4 +136,16 @@ public class TaskListTest {
 
         assertEquals("TaskList currently on AWAY [1/7]", list.toString());
     }
+
+    @Test
+    public void encodeTest() {
+        TaskList list = new TaskList(List.of(new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD),
+                new Task(TaskType.TAKEOFF)));
+        assertEquals("AWAY,AWAY,LAND,WAIT,WAIT,LOAD,TAKEOFF", list.encode());
+    }
 }

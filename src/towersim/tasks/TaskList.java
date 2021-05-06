@@ -159,6 +159,7 @@ public class TaskList {
         encodedString.append(this.getCurrentTask().encode());
         for (int i = 1; i < tasks.size(); i++) {
             encodedString.append(",").append(this.getNextTask().encode());
+            this.moveToNextTask();
         }
         return String.valueOf(encodedString);
     }
