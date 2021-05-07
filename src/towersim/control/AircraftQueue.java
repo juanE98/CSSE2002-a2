@@ -94,15 +94,16 @@ public abstract class AircraftQueue implements Encodable {
         return String.valueOf(encodedString);
     }
 
-    public String callsignList() {
+    private String callsignList() {
         StringBuilder aircraftsCallsign = new StringBuilder();
         List<Aircraft> aircraftInOrder = this.getAircraftInOrder();
-        if (aircraftInOrder != null) {
+        if (aircraftInOrder != null && !(aircraftInOrder.isEmpty())) {
             for (Aircraft aircraft : aircraftInOrder) {
                 aircraftsCallsign.append(aircraft.getCallsign()).append(",");
             }
             if (aircraftsCallsign.length() > 0) {
-                aircraftsCallsign.deleteCharAt(aircraftsCallsign.length() - 1);
+                aircraftsCallsign.delete(aircraftsCallsign.length() - 1,
+                        aircraftsCallsign.length());
             }
         }
         return String.valueOf(aircraftsCallsign);

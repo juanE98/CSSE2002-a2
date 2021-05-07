@@ -75,7 +75,7 @@ public class LandingQueue extends AircraftQueue {
      */
     @Override
     public Aircraft removeAircraft() {
-        Aircraft removeAircraft = this.landingQueue.peek();
+        Aircraft removeAircraft = this.peekAircraft();
         if (removeAircraft != null) {
             this.landingQueue.remove(removeAircraft);
         }
@@ -92,9 +92,18 @@ public class LandingQueue extends AircraftQueue {
      */
     @Override
     public List<Aircraft> getAircraftInOrder() {
+        //List to be returned
         List<Aircraft> InOrder = new LinkedList<>();
+
+        //Copy of LandingQueue
+        LandingQueue landingQueueCopy = new LandingQueue();
+        for (Aircraft aircraft : this.landingQueue) {
+            landingQueueCopy.addAircraft(aircraft);
+        }
+
+        //Order the aircrafts in copy
         for (int i = 0; i < this.landingQueue.size(); i++) {
-            InOrder.add(this.removeAircraft());
+            InOrder.add(landingQueueCopy.removeAircraft());
         }
         return InOrder;
     }

@@ -184,6 +184,9 @@ public abstract class Terminal implements EmergencyState, OccupancyLevel {
         if (this.getTerminalNumber() != other.getTerminalNumber()) {
             return false;
         }
+        if (this.getClass() != other.getClass()) {
+            return false;
+        }
         return true;
     }
 
