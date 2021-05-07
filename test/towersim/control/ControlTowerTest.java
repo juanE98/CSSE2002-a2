@@ -41,6 +41,7 @@ public class ControlTowerTest {
     private Aircraft passengerAircraftLoading;
     private Aircraft passengerAircraftLoadingSingleTick;
     private Aircraft freightAircraftLoadingMultipleTicks;
+    private ControlTower tower1;
 
     @Before
     public void setup() {
@@ -162,6 +163,8 @@ public class ControlTowerTest {
                 AircraftCharacteristics.AIRBUS_A320,
                 taskListAway,
                 AircraftCharacteristics.AIRBUS_A320.fuelCapacity, 120);
+
+
     }
 
     @Test
@@ -420,5 +423,14 @@ public class ControlTowerTest {
         assertEquals("tick() should call tick() on all aircraft managed by the control tower",
                 AircraftCharacteristics.ROBINSON_R44.fuelCapacity,
                 passengerAircraftLoadingSingleTick.getFuelAmount(), 1e-5);
+    }
+
+
+
+
+
+    @Test
+    public void toStringtest() {
+
     }
 }

@@ -263,8 +263,10 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
      * where:
      * callsign is the aircraft's callsign
      * model is the Enum.name() of the aircraft's AircraftCharacteristics
-     * taskListEncoded is the encode() representation of the aircraft's task list (see TaskList.encode())
-     * fuelAmount is the aircraft's current amount of fuel onboard, formatted to exactly two (2) decimal places
+     * taskListEncoded is the encode() representation of the aircraft's task list  (see TaskList
+     * .encode())
+     * fuelAmount is the aircraft's current amount of fuel onboard, formatted to exactly two (2)
+     * decimal places
      * emergency is whether or not the aircraft is currently in a state of emergency
      * For example:
      * ABC123:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,LOAD@50,TAKEOFF,AWAY:3250.00:false
