@@ -45,7 +45,6 @@ public class ControlTowerTest {
 
     @Before
     public void setup() {
-        this.tower = new ControlTower();
 
         this.airplaneTerminal1 = new AirplaneTerminal(1);
         this.airplaneTerminal2 = new AirplaneTerminal(2);

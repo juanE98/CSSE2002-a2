@@ -43,15 +43,6 @@ public class ControlTower implements Tickable {
 
     /**
      * Creates a new ControlTower.
-     * @ass1
-     */
-    public ControlTower() {
-        this.aircraft = new ArrayList<>();
-        this.terminals = new ArrayList<>();
-    }
-
-    /**
-     * Creates a new ControlTower.
      * The number of ticks elapsed, list of aircraft, landing queue, takeoff queue and map of
      * loading aircraft to loading times should all be set to the values passed as parameters.
      *
@@ -369,8 +360,13 @@ public class ControlTower implements Tickable {
      * <p>
      * Move all aircraft with a current task type of AWAY or WAIT to their next task.
      * Process loading aircraft by calling loadAircraft().
-     * On every second tick, attempt to land an aircraft by calling tryLandAircraft(). If an aircraft cannot be landed, attempt to allow an aircraft to take off instead by calling tryTakeOffAircraft(). Note that this begins from the second time tick() is called and every second tick thereafter.
-     * If this is not a tick where the control tower is attempting to land an aircraft, an aircraft should be allowed to take off instead. This ensures that aircraft wishing to take off and land are given an equal share of the runway.
+     * On every second tick, attempt to land an aircraft by calling tryLandAircraft().  If an
+     * aircraft cannot be landed, attempt to allow an aircraft to take off instead by calling
+     * tryTakeOffAircraft(). Note that this begins from the second time tick() is called and
+     * every  second tick thereafter.
+     * If this is not a tick where the control tower is attempting to land an aircraft, an
+     * aircraft  should be allowed to take off instead. This ensures that aircraft wishing to
+     * take  off and land are given an equal share of the runway.
      * Place all aircraft in their appropriate queues by calling placeAllAircraftInQueues().
      * Note that the actions performed by {@code tick()} are very simple at the moment and will be
      * expanded on in assignment 2.
@@ -394,8 +390,7 @@ public class ControlTower implements Tickable {
             if (!this.tryLandAircraft()) {
                 this.tryTakeOffAircraft();
             }
-        }
-        else {
+        } else {
             this.tryTakeOffAircraft();
         }
         this.placeAllAircraftInQueues();
@@ -415,9 +410,10 @@ public class ControlTower implements Tickable {
      */
     @Override
     public String toString() {
-        return String.format("ControlTower: %d terminals, %d total aircraft (%d LAND, %d TAKEOFF," +
-                " %d LOAD)", this.getTerminals().size(), this.aircraft.size(),
+        return String.format("ControlTower: %d terminals, %d total aircraft (%d LAND, %d TAKEOFF,"
+                        + " %d LOAD)", this.getTerminals().size(), this.aircraft.size(),
                 this.getLandingQueue().getAircraftInOrder().size(),
-                this.getTakeoffQueue().getAircraftInOrder().size(), this.getLoadingAircraft().size());
+                this.getTakeoffQueue().getAircraftInOrder().size(),
+                this.getLoadingAircraft().size());
     }
 }

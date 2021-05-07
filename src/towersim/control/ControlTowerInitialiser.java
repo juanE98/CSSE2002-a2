@@ -34,7 +34,6 @@ public class ControlTowerInitialiser {
      * @throws IOException if an IOException is encountered when reading from the reader
      */
     public static long loadTick(Reader reader) throws MalformedSaveException, IOException {
-
         return 0;
     }
 
@@ -67,22 +66,30 @@ public class ControlTowerInitialiser {
     }
 
     /**
-     * Loads the takeoff queue, landing queue and map of loading aircraft from the given reader instance.
-     * Rather than returning a list of queues, this method does not return anything. Instead, it should modify the given takeoff queue, landing queue and loading map by adding aircraft, etc.
+     * Loads the takeoff queue, landing queue and map of loading aircraft from the given reader
+     * instance.
+     * Rather than returning a list of queues, this method does not return anything. Instead,  it
+     * should modify the given takeoff queue, landing queue and loading map by adding aircraft, etc.
      *
-     * The contents of the reader should match the format specified in the queuesWriter row of in the table shown in ViewModel.saveAs().
+     * The contents of the reader should match the format specified in the queuesWriter row of in
+     * the table shown in ViewModel.saveAs().
      *
-     * For an example of valid queues reader contents, see the provided saves/queues_basic.txt and saves/queues_default.txt files.
+     * For an example of valid queues reader contents, see the provided saves/queues_basic.txt
+     * and  saves/queues_default.txt files.
      *
-     * The contents read from the reader are invalid if any of the conditions listed in the Javadoc for readQueue(BufferedReader, List, AircraftQueue) and readLoadingAircraft(BufferedReader, List, Map) are true.
+     * The contents read from the reader are invalid if any of the conditions listed in the
+     * Javadoc  for readQueue(BufferedReader, List, AircraftQueue) and readLoadingAircraft
+     * (BufferedReader, List, Map) are true.
      *
-     * This method should call readQueue(BufferedReader, List, AircraftQueue) and readLoadingAircraft(BufferedReader, List, Map).
+     * This method should call readQueue(BufferedReader, List, AircraftQueue) and
+     * readLoadingAircraft(BufferedReader, List, Map).
      * @param reader reader from which to load the queues and loading map
      * @param aircraft list of all aircraft, used when validating that callsigns exist
      * @param takeoffQueue empty takeoff queue that aircraft will be added to
      * @param landingQueue empty landing queue that aircraft will be added to
      * @param loadingAircraft empty map that aircraft and loading times will be added to
-     * @throws MalformedSaveException if the format of the text read from the reader is invalid according to the rules above
+     * @throws MalformedSaveException if the format of the text read from the reader is invalid
+     * according to the rules above
      * @throws IOException if an IOException is encountered when reading from the reader
      */
     public static void loadQueues(Reader reader, List<Aircraft> aircraft,
