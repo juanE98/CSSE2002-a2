@@ -44,10 +44,11 @@ public class ControlTower implements Tickable {
      *
      * The list of terminals should be initialised as an empty list.
      * @param ticksElapsed number of ticks that have elapsed since the tower was first created
-     * @param aircraft
-     * @param landingQueue
-     * @param takeoffQueue
-     * @param loadingAircraft
+     * @param aircraft list of aircraft managed by the control tower
+     * @param landingQueue queue of aircraft waiting to land
+     * @param takeoffQueue queue of aircraft waiting to take off
+     * @param loadingAircraft mapping of aircraft that are loading cargo to the number of ticks
+     *                        remaining for loading
      */
     public ControlTower(long ticksElapsed, List<Aircraft> aircraft, LandingQueue landingQueue,
                         TakeoffQueue takeoffQueue, Map<Aircraft, Integer> loadingAircraft) {
