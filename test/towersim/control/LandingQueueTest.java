@@ -317,7 +317,7 @@ public class LandingQueueTest {
     public void encodeTestBasic() {
         this.landingQueueMix.addAircraft(aircraft1);
         this.landingQueueMix.addAircraft(aircraft3);
-        assertEquals("LandingQueue:2" + System.lineSeparator()+ "ABC001, ABC003",
+        assertEquals("LandingQueue:2" + System.lineSeparator()+ "ABC001,ABC003",
                 this.landingQueueMix.encode());
     }
 }

@@ -39,7 +39,8 @@ public class ControlTower implements Tickable {
 
     /**
      * Creates a new ControlTower.
-     * The number of ticks elapsed, list of aircraft, landing queue, takeoff queue and map of loading aircraft to loading times should all be set to the values passed as parameters.
+     * The number of ticks elapsed, list of aircraft, landing queue, takeoff queue and map of
+     * loading aircraft to loading times should all be set to the values passed as parameters.
      *
      * The list of terminals should be initialised as an empty list.
      * @param ticksElapsed number of ticks that have elapsed since the tower was first created
@@ -49,7 +50,7 @@ public class ControlTower implements Tickable {
      * @param loadingAircraft
      */
     public ControlTower(long ticksElapsed, List<Aircraft> aircraft, LandingQueue landingQueue,
-                        TakeoffQueue takeoffQueue, Map<Aircraft,Integer> loadingAircraft) {
+                        TakeoffQueue takeoffQueue, Map<Aircraft, Integer> loadingAircraft) {
 
         this.aircraft = new ArrayList<>();
         this.terminals = new ArrayList<>();
@@ -146,7 +147,7 @@ public class ControlTower implements Tickable {
      * Returns the queue of aircraft waiting to take off.
      * @return takeoff queue
      */
-    public AircraftQueue getTakeoffQueue(){
+    public AircraftQueue getTakeoffQueue() {
         return null;
     }
 

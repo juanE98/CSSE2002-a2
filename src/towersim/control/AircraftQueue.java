@@ -64,7 +64,7 @@ public abstract class AircraftQueue implements Encodable {
      */
     @Override
     public String toString() {
-        String aircrafts = this.callsignList();
+        String aircrafts = this.callsignList(false);
         return String.format("%s [%s]", this.getClass().getSimpleName(), aircrafts);
     }
 
@@ -90,20 +90,37 @@ public abstract class AircraftQueue implements Encodable {
         StringBuilder encodedString = new StringBuilder();
         encodedString.append(this.getClass().getSimpleName()).append(":").append(this.getAircraftInOrder().size());
         encodedString.append(System.lineSeparator());
-        encodedString.append(this.callsignList());
+        encodedString.append(this.callsignList(true));
         return String.valueOf(encodedString);
     }
 
-    private String callsignList() {
+    /**
+     * Helper method to get the String representation of the aircrafts' callsign.
+     * @param encode true if called by encode, false otherwise
+     * @return string representation of aircrafts' callsign
+     */
+    private String callsignList(boolean encode) {
         StringBuilder aircraftsCallsign = new StringBuilder();
         List<Aircraft> aircraftInOrder = this.getAircraftInOrder();
         if (aircraftInOrder != null && !(aircraftInOrder.isEmpty())) {
-            for (Aircraft aircraft : aircraftInOrder) {
-                aircraftsCallsign.append(aircraft.getCallsign()).append(", ");
+            if (!encode)
+            {
+                for (Aircraft aircraft : aircraftInOrder) {
+                    aircraftsCallsign.append(aircraft.getCallsign()).append(", ");
+                }
+                if (aircraftsCallsign.length() > 0) {
+                    aircraftsCallsign.delete(aircraftsCallsign.length() - 2,
+                            aircraftsCallsign.length());
+                }
             }
-            if (aircraftsCallsign.length() > 0) {
-                aircraftsCallsign.delete(aircraftsCallsign.length() - 2,
-                        aircraftsCallsign.length());
+            else {
+                for (Aircraft aircraft : aircraftInOrder) {
+                    aircraftsCallsign.append(aircraft.getCallsign()).append(",");
+                }
+                if (aircraftsCallsign.length() > 0) {
+                    aircraftsCallsign.delete(aircraftsCallsign.length() - 1,
+                            aircraftsCallsign.length());
+                }
             }
         }
         return String.valueOf(aircraftsCallsign);
