@@ -416,7 +416,7 @@ public class ControlTower implements Tickable {
     @Override
     public String toString() {
         return String.format("ControlTower: %d terminals, %d total aircraft (%d LAND, %d TAKEOFF," +
-                " %d LOAD", this.getTerminals().size(), this.aircraft.size(),
+                " %d LOAD)", this.getTerminals().size(), this.aircraft.size(),
                 this.getLandingQueue().getAircraftInOrder().size(),
                 this.getTakeoffQueue().getAircraftInOrder().size(), this.getLoadingAircraft().size());
     }
