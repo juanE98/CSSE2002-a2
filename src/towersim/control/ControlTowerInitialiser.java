@@ -172,12 +172,22 @@ public class ControlTowerInitialiser {
         return aircraftRead;
     }
 
-
     /**
+     * Reads a task list from its encoded representation in the given string.
+     * The format of the string should match the encoded representation of a task list, as
+     * described  in TaskList.encode().
      *
-     * @param taskListPart
-     * @return
-     * @throws MalformedSaveException
+     * The encoded string is invalid if any of the following conditions are true:
+     *
+     * The task list's TaskType is not valid (i.e. it is not one of those listed in TaskType.values()).
+     * A task's load percentage is not an integer (i.e. cannot be parsed by Integer.parseInt(String)).
+     * A task's load percentage is less than zero.
+     * More than one at-symbol (@) is detected for any task in the task list.
+     * The task list is invalid according to the rules specified in TaskList(List).
+     * @param taskListPart string containing the encoded task list
+     * @return decoded task list instance
+     * @throws MalformedSaveException if the format of the given string is invalid according to
+     * the rules above
      */
     public static TaskList readTaskList (String taskListPart) throws MalformedSaveException {
         List<Task> taskList = new ArrayList<>();
@@ -254,7 +264,10 @@ public class ControlTowerInitialiser {
     public static void loadQueues(Reader reader, List<Aircraft> aircraft,
                                    TakeoffQueue takeoffQueue, LandingQueue landingQueue,
                                    Map<Aircraft,Integer> loadingAircraft) throws MalformedSaveException, IOException {
-
+        if (reader == null) {
+            throw new IOException();
+        }
+        
     }
 
     /**
