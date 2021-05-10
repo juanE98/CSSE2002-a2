@@ -214,15 +214,6 @@ public class ControlTowerInitialiser {
         return new TaskList(taskList);
     }
 
-    public static void readQueue (BufferedReader reader, List<Aircraft> aircraft,
-                                  AircraftQueue queue) throws IOException, MalformedSaveException {
-
-    }
-
-    public static void readLoadingAircraft (BufferedReader reader, List<Aircraft> aircraft,
-                                            Map<Aircraft, Integer> loadingAircraft) throws IOException, MalformedSaveException {
-
-    }
 
     public static Terminal readTerminal (String line, BufferedReader reader,
                                          List<Aircraft> aircraft) throws IOException,
@@ -267,6 +258,62 @@ public class ControlTowerInitialiser {
         if (reader == null) {
             throw new IOException();
         }
+        BufferedReader file = new BufferedReader(reader);
+        try {
+            readQueue(file, aircraft, takeoffQueue);
+            readQueue(file,aircraft,landingQueue);
+            readLoadingAircraft(file, aircraft, loadingAircraft);
+        } catch (IOException e) {
+            throw new IOException();
+        } catch (MalformedSaveException e) {
+            throw new MalformedSaveException();
+        }
+    }
+
+    public static void readQueue (BufferedReader reader, List<Aircraft> aircraft,
+                                  AircraftQueue queue) throws IOException, MalformedSaveException {
+       int numAircraft;
+       int numAircraftRead = 0;
+
+        try {
+            String [] queueParts = reader.readLine().split(":");
+            if (queueParts.length > 2) {
+                throw new MalformedSaveException();
+            }
+            if (!queueParts[0].equals(queue.getClass().getSimpleName())) {
+                throw new MalformedSaveException();
+            }
+            numAircraft = Integer.parseInt(queueParts[1]);
+            if (numAircraft > 0) {
+                String aircraftRead;
+                do {
+                    aircraftRead = reader.readLine();
+                    numAircraftRead++;
+                    boolean aircraftFound = false;
+                    if ( aircraftRead == null) {
+                        throw new MalformedSaveException();
+                    }
+                    for (Aircraft aircraftListed : aircraft) {
+                        if (aircraftListed.getCallsign().equals(aircraftRead)) {
+                            aircraftFound = true;
+                            queue.addAircraft(aircraftListed);
+                        }
+                    }
+                    if (!aircraftFound) {
+                        throw new MalformedSaveException();
+                    }
+                } while (aircraftRead.startsWith("Landing") || aircraftRead.startsWith("Loading"));
+            }
+            if (numAircraft != numAircraftRead) {
+                throw new MalformedSaveException();
+            }
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new MalformedSaveException();
+        }
+    }
+
+    public static void readLoadingAircraft (BufferedReader reader, List<Aircraft> aircraft,
+                                            Map<Aircraft, Integer> loadingAircraft) throws IOException, MalformedSaveException {
         
     }
 
