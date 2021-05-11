@@ -195,18 +195,22 @@ public class ControlTowerInitialiser {
      * the rules above
      */
     public static TaskList readTaskList (String taskListPart) throws MalformedSaveException {
+        //TaskList to be returned
         List<Task> taskList = new ArrayList<>();
         String [] task = taskListPart.split(",");
         for (String taskString : task) {
             if (taskString.contains("@")) {
                 // check if taskString contains multiple '@'
                 String [] taskLoad = taskString.split("@");
+                // string [] is expected to only have 2 elements with one '@'
                 if (taskLoad.length > 2) {
                     throw new MalformedSaveException();
                 }
                 try {
                     int loadPercent = Integer.parseInt(taskLoad[1]);
-                    taskList.add(new Task(TaskType.valueOf(taskLoad[0]),loadPercent));
+                    Task taskSpecific = new Task(TaskType.valueOf(taskLoad[0]), loadPercent);
+                    taskList.add(taskSpecific);
+                    //loadPercent cannot be negative number
                     if (loadPercent < 0) {
                         throw new IllegalArgumentException();
                     }
@@ -214,7 +218,9 @@ public class ControlTowerInitialiser {
                     throw new MalformedSaveException();
                 }
             }
-            taskList.add(new Task(TaskType.valueOf(taskString)));
+            else {
+                taskList.add(new Task(TaskType.valueOf(taskString)));
+            }
         }
         return new TaskList(taskList);
     }
