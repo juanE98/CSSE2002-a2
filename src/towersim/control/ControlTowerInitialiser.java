@@ -4,12 +4,15 @@ import towersim.aircraft.Aircraft;
 import towersim.aircraft.AircraftCharacteristics;
 import towersim.aircraft.FreightAircraft;
 import towersim.aircraft.PassengerAircraft;
+import towersim.ground.AirplaneTerminal;
 import towersim.ground.Gate;
+import towersim.ground.HelicopterTerminal;
 import towersim.ground.Terminal;
 import towersim.tasks.Task;
 import towersim.tasks.TaskList;
 import towersim.tasks.TaskType;
 import towersim.util.MalformedSaveException;
+import towersim.util.NoSpaceException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,6 +57,8 @@ public class ControlTowerInitialiser {
             throw new MalformedSaveException();
         } catch (IOException e) {
             throw new IOException();
+        } finally {
+            file.close();
         }
         if (ticksElapsed < 0) {
             throw new MalformedSaveException();
@@ -105,6 +110,8 @@ public class ControlTowerInitialiser {
             throw new MalformedSaveException();
         } catch (IOException e) {
             throw new IOException();
+        } finally {
+            file.close();
         }
 
         if (numAircraft != numAircraftRead) {
@@ -214,17 +221,6 @@ public class ControlTowerInitialiser {
         return new TaskList(taskList);
     }
 
-
-    public static Terminal readTerminal (String line, BufferedReader reader,
-                                         List<Aircraft> aircraft) throws IOException,
-            MalformedSaveException {
-
-    }
-
-    public static Gate readGate (String line, List<Aircraft> aircraft) throws MalformedSaveException {
-
-    }
-
     /**
      * Loads the takeoff queue, landing queue and map of loading aircraft from the given reader
      * instance.
@@ -267,6 +263,8 @@ public class ControlTowerInitialiser {
             throw new IOException();
         } catch (MalformedSaveException e) {
             throw new MalformedSaveException();
+        } finally {
+            file.close();
         }
     }
 
@@ -274,7 +272,6 @@ public class ControlTowerInitialiser {
                                   AircraftQueue queue) throws IOException, MalformedSaveException {
        int numAircraft;
        int numAircraftRead = 0;
-
         try {
             String [] queueParts = reader.readLine().split(":");
             if (queueParts.length > 2) {
@@ -302,19 +299,61 @@ public class ControlTowerInitialiser {
                     if (!aircraftFound) {
                         throw new MalformedSaveException();
                     }
-                } while (aircraftRead.startsWith("Landing") || aircraftRead.startsWith("Loading"));
+                } while (!aircraftRead.startsWith("Landing") || !aircraftRead.startsWith("Loading"));
             }
+
             if (numAircraft != numAircraftRead) {
                 throw new MalformedSaveException();
             }
         } catch (IllegalArgumentException | NullPointerException e) {
             throw new MalformedSaveException();
+        } catch (IOException e) {
+            throw new IOException();
         }
     }
 
     public static void readLoadingAircraft (BufferedReader reader, List<Aircraft> aircraft,
                                             Map<Aircraft, Integer> loadingAircraft) throws IOException, MalformedSaveException {
-        
+        int numAircraft;
+        int numAircraftRead = 0;
+        try {
+            String [] loadingAircraftParts = reader.readLine().split(":");
+            if (loadingAircraftParts.length > 2) {
+                throw new MalformedSaveException();
+            }
+            numAircraft = Integer.parseInt(loadingAircraftParts[1]);
+            if (numAircraft > 0) {
+                String loadingAircraftRead;
+                while ((loadingAircraftRead = reader.readLine()) != null) {
+                    numAircraftRead++;
+                    boolean aircraftFound = false;
+                    String [] loadingMap = loadingAircraftRead.split(":");
+                    if (loadingMap.length > 2) {
+                        throw new MalformedSaveException();
+                    }
+                    int ticksRemaining = Integer.parseInt(loadingMap[1]);
+                    if (ticksRemaining < 1) {
+                        throw new MalformedSaveException();
+                    }
+                    for (Aircraft aircraftParked : aircraft) {
+                        if (aircraftParked.getCallsign().equals(loadingMap[0])) {
+                            aircraftFound = true;
+                            loadingAircraft.put(aircraftParked, ticksRemaining);
+                        }
+                    }
+                    if (!aircraftFound) {
+                        throw new MalformedSaveException();
+                    }
+                }
+            }
+            if (numAircraft != numAircraftRead) {
+                throw new MalformedSaveException();
+            }
+        } catch (IOException e) {
+            throw new IOException();
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new MalformedSaveException();
+        }
     }
 
     /**
@@ -342,8 +381,160 @@ public class ControlTowerInitialiser {
      * @throws IOException if an IOException is encountered when reading from the reader
      */
     public static List<Terminal> loadTerminalsWithGates(Reader reader, List<Aircraft> aircraft) throws MalformedSaveException, IOException {
+        if (reader == null) {
+            throw new IOException();
+        }
+        List<Terminal> terminalsLoaded = new ArrayList<>();
+        int numTerminals = 0;
+        BufferedReader file = new BufferedReader(reader);
+        try {
+            numTerminals = Integer.parseInt(file.readLine());
+            String terminalLine;
+            if (numTerminals > 0) {
+                while ((terminalLine = file.readLine()) != null && terminalLine.startsWith(
+                        "AirplaneTerminal") || terminalLine.startsWith("HelicopterTerminal")) {
+                    terminalsLoaded.add(readTerminal(terminalLine,file,aircraft));
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new MalformedSaveException();
+        } finally {
+            file.close();
+        }
+        if (terminalsLoaded.size() != numTerminals) {
+            throw new MalformedSaveException();
+        }
+        return terminalsLoaded;
+    }
 
-        return null;
+    /**
+     * Reads a terminal from the given string and reads its gates from the given reader instance.
+     * The format of the given string and the text read from the reader should match the encoded
+     * representation of a terminal, as described in Terminal.encode().
+     *
+     * For an example of valid encoded terminal with gates, see the provided
+     * saves/terminalsWithGates_basic.txt and saves/terminalsWithGates_default.txt files.
+     *
+     * The encoded terminal is invalid if any of the following conditions are true:
+     *
+     * The number of colons (:) detected on the first line is more/fewer than expected.
+     * The terminal type specified on the first line is neither AirplaneTerminal nor
+     * HelicopterTerminal.
+     * The terminal number is not an integer (i.e. cannot be parsed by Integer.parseInt(String)).
+     * The terminal number is less than one (1).
+     * The number of gates in the terminal is not an integer.
+     * The number of gates is less than zero or is greater than Terminal.MAX_NUM_GATES.
+     * A line containing an encoded gate was expected, but EOF (end of file) was received (i.e.
+     * BufferedReader.readLine() returns null).
+     * Any of the conditions listed in the Javadoc for readGate(String, List) are true.
+     * @param line string containing the first line of the encoded terminal
+     * @param reader reader from which to load the gates of the terminal (subsequent lines)
+     * @param aircraft list of all aircraft, used when validating that callsigns exist
+     * @return decoded terminal with its gates added
+     * @throws IOException if an IOException is encountered when reading from the reader
+     * @throws MalformedSaveException if the format of the given string or the text read from the
+     * reader is invalid according to the rules above
+     */
+    public static Terminal readTerminal (String line, BufferedReader reader,
+                                         List<Aircraft> aircraft) throws IOException,
+            MalformedSaveException {
+        Terminal terminalRead;
+        String terminalType;
+        int numGates = 0;
+        int colonsExpected = 4;
+        int terminalNumber;
+        boolean emergencyStatus;
+        String [] terminalParts = line.split(":");
+        if (terminalParts.length != colonsExpected) {
+            throw new MalformedSaveException();
+        }
+        try {
+            numGates = Integer.parseInt(terminalParts[3]);
+            List<Gate> gatesOfTerminal = new ArrayList<>();
+            terminalType = terminalParts[0];
+            terminalNumber = Integer.parseInt(terminalParts[1]);
+            emergencyStatus = Boolean.parseBoolean(terminalParts[2]);
+            if (terminalNumber < 1) {
+                throw new MalformedSaveException();
+            }
+            if (numGates < 0 || numGates > Terminal.MAX_NUM_GATES) {
+                throw new MalformedSaveException();
+            }
+            //Create Terminal
+            if (terminalType.equals("AirplaneTerminal")) {
+                terminalRead = new AirplaneTerminal(terminalNumber);
+            }
+            else if (terminalType.equals("HelicopterTerminal")) {
+                terminalRead = new HelicopterTerminal(terminalNumber);
+            }
+            else {
+                throw new MalformedSaveException();
+            }
+            //read gates based on numGates
+            for (int i = 0; i < numGates; i++) {
+                line = reader.readLine();
+                if (line == null) {
+                    throw new IOException();
+                }
+                terminalRead.addGate(readGate(line, aircraft));
+            }
+        } catch (IllegalArgumentException | NoSpaceException e) {
+            throw new MalformedSaveException();
+        }
+        if (emergencyStatus) {
+            terminalRead.declareEmergency();
+        }
+        return terminalRead;
+    }
+
+    /**
+     * Reads a gate from its encoded representation in the given string.
+     * The format of the string should match the encoded representation of a gate, as described
+     * in  Gate.encode().
+     *
+     * The encoded string is invalid if any of the following conditions are true:
+     *
+     * The number of colons (:) detected was more/fewer than expected.
+     * The gate number is not an integer (i.e. cannot be parsed by Integer.parseInt(String)).
+     * The gate number is less than one (1).
+     * The callsign of the aircraft parked at the gate is not empty and the callsign does not
+     * correspond to the callsign of any aircraft contained in the list of aircraft given as a parameter.
+     * @param line string containing the encoded gate
+     * @param aircraft list of all aircraft, used when validating that callsigns exist
+     * @return decoded gate instance
+     * @throws MalformedSaveException if the format of the given string is invalid according to
+     * the rules above
+     */
+    public static Gate readGate (String line, List<Aircraft> aircraft) throws MalformedSaveException {
+        Gate gateRead;
+        int colonsExpected = 2;
+        int gateNumber;
+        String space;
+        String [] gateParts = line.split(":");
+        if (gateParts.length != colonsExpected) {
+            throw new MalformedSaveException();
+        }
+        try {
+            gateNumber = Integer.parseInt(gateParts[0]);
+            if (gateNumber < 1) {
+                throw new MalformedSaveException();
+            }
+            space = gateParts[1];
+            gateRead = new Gate(gateNumber);
+
+            if (!space.equals("empty")) {
+                //park aircraft at Gate
+                for (Aircraft aircraftPark : aircraft) {
+                    if (aircraftPark.getCallsign().equals(space)) {
+                        gateRead.parkAircraft(aircraftPark);
+                    }
+                }
+            }
+
+        } catch (IllegalArgumentException | NoSpaceException e) {
+            throw new MalformedSaveException();
+        }
+        return gateRead;
     }
 
     /**
