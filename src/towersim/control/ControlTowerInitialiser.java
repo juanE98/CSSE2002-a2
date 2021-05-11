@@ -268,6 +268,34 @@ public class ControlTowerInitialiser {
         }
     }
 
+    /**
+     * Reads an aircraft queue from the given reader instance.
+     * Rather than returning a queue, this method does not return anything. Instead, it  should
+     * modify the given aircraft queue by adding aircraft to it.
+     *
+     * The contents of the text read from the reader should match the encoded representation of
+     * an aircraft queue, as described in AircraftQueue.encode().
+     *
+     * The contents read from the reader are invalid if any of the following conditions are true:
+     *
+     * The first line read from the reader is null.
+     * The first line contains more/fewer colons (:) than expected.
+     * The queue type specified in the first line is not equal to the simple class name of the
+     * queue provided as a parameter.
+     * The number of aircraft specified on the first line is not an integer (i.e. cannot be
+     * parsed  by Integer.parseInt(String)).
+     * The number of aircraft specified is greater than zero and the second line read is null.
+     * The number of callsigns listed on the second line is not equal to the number of aircraft
+     * specified on the first line.
+     * A callsign listed on the second line does not correspond to the callsign of any aircraft
+     * contained in the list of aircraft given as a parameter.
+     * @param reader reader from which to load the aircraft queue
+     * @param aircraft list of all aircraft, used when validating that callsigns exist
+     * @param queue empty queue that aircraft will be added to
+     * @throws IOException if an IOException is encountered when reading from the reader
+     * @throws MalformedSaveException if the format of the text read from the reader is invalid
+     * according to the rules above
+     */
     public static void readQueue (BufferedReader reader, List<Aircraft> aircraft,
                                   AircraftQueue queue) throws IOException, MalformedSaveException {
        int numAircraft;
@@ -312,6 +340,42 @@ public class ControlTowerInitialiser {
         }
     }
 
+    /**
+     * Reads the map of currently loading aircraft from the given reader instance.
+     * Rather than returning a map, this method does not return anything. Instead, it should
+     * modify  the given map by adding entries (aircraft/integer pairs) to it.
+     *
+     * The contents of the text read from the reader should match the format specified in the
+     * queuesWriter row of in the table shown in ViewModel.saveAs(). Note that this method should
+     * only read the map of loading aircraft, not the takeoff queue or landing queue. Reading
+     * these  queues is handled in the readQueue(BufferedReader, List, AircraftQueue) method.
+     *
+     * For an example of valid encoded map of loading aircraft, see the provided
+     * saves/queues_basic.txt and saves/queues_default.txt files.
+     *
+     * The contents read from the reader are invalid if any of the following conditions are true:
+     *
+     * The first line read from the reader is null.
+     * The number of colons (:) detected on the first line is more/fewer than expected.
+     * The number of aircraft specified on the first line is not an integer (i.e. cannot be
+     * parsed  by Integer.parseInt(String)).
+     * The number of aircraft is greater than zero and the second line read from the reader is null.
+     * The number of aircraft specified on the first line is not equal to the number of callsigns
+     * read on the second line.
+     * For any callsign/loading time pair on the second line, the number of colons detected is
+     * not equal to one. For example, ABC123:5:9 is invalid.
+     * A callsign listed on the second line does not correspond to the callsign of any aircraft
+     * contained in the list of aircraft given as a parameter.
+     * Any ticksRemaining value on the second line is not an integer (i.e. cannot be parsed by
+     * Integer.parseInt(String)).
+     * Any ticksRemaining value on the second line is less than one (1).
+     * @param reader reader from which to load the map of loading aircraft
+     * @param aircraft list of all aircraft, used when validating that callsigns exist
+     * @param loadingAircraft empty map that aircraft and their loading times will be added to
+     * @throws IOException if an IOException is encountered when reading from the reader
+     * @throws MalformedSaveException if the format of the text read from the reader is  invalid
+     * according to the rules above
+     */
     public static void readLoadingAircraft (BufferedReader reader, List<Aircraft> aircraft,
                                             Map<Aircraft, Integer> loadingAircraft) throws IOException, MalformedSaveException {
         int numAircraft;
