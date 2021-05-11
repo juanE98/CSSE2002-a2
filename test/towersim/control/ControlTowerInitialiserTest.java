@@ -117,14 +117,177 @@ public class ControlTowerInitialiserTest {
         }
     }
 
-
     @Test
     public void readAircraftBasic() {
-
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000.00:false:132";
+            ControlTowerInitialiser.readAircraft(line);
+        } catch (MalformedSaveException e) {
+            fail();
+        }
     }
 
     @Test
-    public void readTaskList() {
-
+    public void readAircraftMoreColons() {
+        try {
+            String line = "QFA481::AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF," +
+                    "AWAY:10000.00:false:132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            // more colons detected.
+        }
     }
+
+    @Test
+    public void readAircraftLessColons() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF," +
+                    "AWAY:10000.00false:132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            // less colons detected.
+        }
+    }
+
+    @Test
+    public void readAircraftNotValid() {
+        try {
+            String line = "QFA481:AIRBUS_A3120:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF," +
+                    "AWAY:10000.00:false:132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //Aircraft AIRBUS_A3120 is not a value of AircraftCharacteristics
+        }
+    }
+
+    @Test
+    public void readAircraftFuelAmountInvalid() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF," +
+                    "AWAY:TWENTY:false:132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //fuel amount not a double
+        }
+    }
+
+    @Test
+    public void readAircraftFuelAmountNegative() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF," +
+                    "AWAY:-100.00:false:132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //negative fuel amount
+        }
+    }
+
+    @Test
+    public void readAircraftFuelOver() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:27201" +
+                    ".00:false:132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //fuel greater than aircraft's maximum capacity
+        }
+    }
+
+    @Test
+    public void readAircraftCargoInvalid() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000" +
+                    ".00:false:Twenty";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //cargo is not an integer
+        }
+    }
+
+    @Test
+    public void readAircraftCargoNegative() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000" +
+                    ".00:false:-132";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //cargo is negative
+        }
+    }
+
+    @Test
+    public void readAircraftCargoOver() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000" +
+                    ".00:false:151";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //too many passsengers
+        }
+    }
+
+    @Test
+    public void readTaskListBasic() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+        } catch (MalformedSaveException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void readTaskListInvalidTaskType() {
+        try {
+            String line = "AWAY,HOLD,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //HOLD is not a TaskType value
+        }
+    }
+
+    @Test
+    public void readTaskListLoadPercentageInvalid() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@TWENTY,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //load percentage is not an integer
+        }
+    }
+
+    @Test
+    public void readTaskListLoadPercentageNegative() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@-1,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //load percentage is negative
+        }
+    }
+
+    @Test
+    public void readTaskListInvalidSymbol() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60@,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //more than one @ symbol
+        }
+    }
+
+
 }

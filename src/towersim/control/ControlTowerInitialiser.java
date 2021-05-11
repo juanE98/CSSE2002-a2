@@ -149,7 +149,7 @@ public class ControlTowerInitialiser {
         AircraftCharacteristics aircraftCharacteristics;
         TaskList taskListEncoded;
         Double fuelAmount;
-        String emergencyStatus;
+        boolean emergencyStatus;
         int cargo;
         Aircraft aircraftRead;
         String [] aircraftProperties = line.split(":");
@@ -161,18 +161,29 @@ public class ControlTowerInitialiser {
             aircraftCharacteristics = AircraftCharacteristics.valueOf(aircraftProperties[1]);
             taskListEncoded = readTaskList(aircraftProperties[2]);
             fuelAmount = Double.parseDouble(aircraftProperties[3]);
-            emergencyStatus = aircraftProperties[4];
+            emergencyStatus = Boolean.parseBoolean(aircraftProperties[4]);
             cargo = Integer.parseInt(aircraftProperties[5]);
+            //check if cargo is a negative value
+            if (cargo < 0) {
+                throw new MalformedSaveException();
+            }
+            //PassengerAircraft is created
             if (cargo > 0) {
                 aircraftRead = new PassengerAircraft(callsign, aircraftCharacteristics, taskListEncoded, fuelAmount,
                         cargo);
+                if (cargo > aircraftRead.getCharacteristics().passengerCapacity) {
+                    throw new MalformedSaveException();
+                }
             }
+            //FreightAircraft is created
             else {
                 aircraftRead = new FreightAircraft(callsign, aircraftCharacteristics, taskListEncoded, fuelAmount,0);
             }
-
         } catch (IllegalArgumentException e) {
             throw new MalformedSaveException();
+        }
+        if (emergencyStatus) {
+            aircraftRead.declareEmergency();
         }
         return aircraftRead;
     }
@@ -197,16 +208,25 @@ public class ControlTowerInitialiser {
     public static TaskList readTaskList (String taskListPart) throws MalformedSaveException {
         //TaskList to be returned
         List<Task> taskList = new ArrayList<>();
-        String [] task = taskListPart.split(",");
+        String[] task = taskListPart.split(",");
         for (String taskString : task) {
-            if (taskString.contains("@")) {
-                // check if taskString contains multiple '@'
-                String [] taskLoad = taskString.split("@");
-                // string [] is expected to only have 2 elements with one '@'
-                if (taskLoad.length > 2) {
-                    throw new MalformedSaveException();
-                }
-                try {
+            try {
+                if (taskString.contains("@")) {
+                    // counter for the @ symbol within the String.
+                    int symbolCounter = 0;
+                    for (int i = 0; i < taskString.length(); i++) {
+                        char c = taskString.charAt(i);
+                        if (c == '@') {
+                            symbolCounter++;
+                        }
+                    }
+                    //if more than one @ symbol is found, throw exception.
+                    if (symbolCounter > 1) {
+                        throw new MalformedSaveException();
+                    }
+                    // check if taskString contains multiple '@'
+                    String[] taskLoad = taskString.split("@");
+
                     int loadPercent = Integer.parseInt(taskLoad[1]);
                     Task taskSpecific = new Task(TaskType.valueOf(taskLoad[0]), loadPercent);
                     taskList.add(taskSpecific);
@@ -214,12 +234,12 @@ public class ControlTowerInitialiser {
                     if (loadPercent < 0) {
                         throw new IllegalArgumentException();
                     }
-                } catch (IllegalArgumentException e) {
-                    throw new MalformedSaveException();
                 }
-            }
-            else {
-                taskList.add(new Task(TaskType.valueOf(taskString)));
+                else {
+                    taskList.add(new Task(TaskType.valueOf(taskString)));
+                }
+            } catch (IllegalArgumentException e) {
+                throw new MalformedSaveException();
             }
         }
         return new TaskList(taskList);
