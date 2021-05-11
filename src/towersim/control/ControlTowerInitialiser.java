@@ -17,9 +17,7 @@ import towersim.util.NoSpaceException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Utility class that contains static methods for loading a control tower and associated
@@ -594,7 +592,6 @@ public class ControlTowerInitialiser {
                     }
                 }
             }
-
         } catch (IllegalArgumentException | NoSpaceException e) {
             throw new MalformedSaveException();
         }
@@ -633,7 +630,16 @@ public class ControlTowerInitialiser {
      */
     public static ControlTower createControlTower(Reader tick, Reader aircraft, Reader queues,
                                                   Reader terminalsWithGates) throws MalformedSaveException, IOException {
-
-        return null;
+        long controlTowerTick = loadTick(tick);
+        List<Aircraft> controlTowerAircrafts = loadAircraft(aircraft);
+        List<Terminal> controlTowerTerminals = loadTerminalsWithGates(terminalsWithGates,
+                controlTowerAircrafts);
+        TakeoffQueue takeoffQueue = new TakeoffQueue();
+        LandingQueue landingQueue = new LandingQueue();
+        Map<Aircraft,Integer> loadingAircraftMap =
+                new TreeMap<>(Comparator.comparing(Aircraft::getCallsign));
+        loadQueues(queues, controlTowerAircrafts, takeoffQueue, landingQueue, loadingAircraftMap);
+        return new ControlTower(controlTowerTick, controlTowerAircrafts, landingQueue,
+                takeoffQueue, loadingAircraftMap);
     }
 }
