@@ -206,7 +206,7 @@ public class ControlTowerInitialiser {
      * the rules above
      */
     public static TaskList readTaskList (String taskListPart) throws MalformedSaveException {
-        //TaskList to be returned
+        //tasks to be added to TaskList returned
         List<Task> taskList = new ArrayList<>();
         String[] task = taskListPart.split(",");
         for (String taskString : task) {
@@ -242,7 +242,11 @@ public class ControlTowerInitialiser {
                 throw new MalformedSaveException();
             }
         }
-        return new TaskList(taskList);
+        try {
+            return new TaskList(taskList);
+        } catch (IllegalArgumentException e) {
+            throw new MalformedSaveException();
+        }
     }
 
     /**

@@ -289,5 +289,47 @@ public class ControlTowerInitialiserTest {
         }
     }
 
+    @Test
+    public void readTaskListTaskListRules() {
+        try {
+            String line = "TAKEOFF,AWAY,LAND,WAIT,WAIT,LOAD@60@,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //breaks TaskList rules
+        }
+    }
+    @Test
+    public void readTaskListTaskListRules1() {
+        try {
+            String line = "LOAD,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //breaks TaskList rules
+        }
+    }
+    @Test
+    public void readTaskListTaskListRules2() {
+        try {
+            String line = " ";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //breaks TaskList rules
+        }
+    }
+    @Test
+    public void readTaskListTaskListRules3() {
+        try {
+            String line = "WAIT,LAND";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //breaks TaskList rules
+        }
+    }
+    
+
 
 }
