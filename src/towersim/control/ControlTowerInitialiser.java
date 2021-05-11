@@ -483,8 +483,7 @@ public class ControlTowerInitialiser {
             numTerminals = Integer.parseInt(file.readLine());
             String terminalLine;
             if (numTerminals > 0) {
-                while ((terminalLine = file.readLine()) != null && terminalLine.startsWith(
-                        "AirplaneTerminal") || terminalLine.startsWith("HelicopterTerminal")) {
+                while ((terminalLine = file.readLine()) != null) {
                     terminalsLoaded.add(readTerminal(terminalLine,file,aircraft));
                 }
             }
@@ -664,12 +663,17 @@ public class ControlTowerInitialiser {
         List<Aircraft> controlTowerAircrafts = loadAircraft(aircraft);
         List<Terminal> controlTowerTerminals = loadTerminalsWithGates(terminalsWithGates,
                 controlTowerAircrafts);
+
         TakeoffQueue takeoffQueue = new TakeoffQueue();
         LandingQueue landingQueue = new LandingQueue();
         Map<Aircraft,Integer> loadingAircraftMap =
                 new TreeMap<>(Comparator.comparing(Aircraft::getCallsign));
         loadQueues(queues, controlTowerAircrafts, takeoffQueue, landingQueue, loadingAircraftMap);
-        return new ControlTower(controlTowerTick, controlTowerAircrafts, landingQueue,
+        ControlTower controlTower = new ControlTower(controlTowerTick, controlTowerAircrafts, landingQueue,
                 takeoffQueue, loadingAircraftMap);
+        for (Terminal terminal : controlTowerTerminals) {
+            controlTower.addTerminal(terminal);
+        }
+        return controlTower;
     }
 }

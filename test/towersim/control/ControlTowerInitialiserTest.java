@@ -8,7 +8,10 @@ import towersim.util.MalformedSaveException;
 
 import javax.naming.ldap.Control;
 import java.io.*;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +25,10 @@ public class ControlTowerInitialiserTest {
     private Reader terminalGatesDefault;
     private Reader tickBasic;
     private Reader tickDefault;
+    private Map<Aircraft,Integer> loadingAircraftMap;
+    private TakeoffQueue takeoffQueue;
+    private LandingQueue landingQueue;
+
 
     @Before
     public void setUp() throws Exception {
@@ -33,6 +40,11 @@ public class ControlTowerInitialiserTest {
         terminalGatesDefault = new FileReader("saves/terminalsWithGates_default.txt");
         tickBasic = new FileReader("saves/tick_basic.txt");
         tickDefault = new FileReader("saves/tick_default.txt");
+        takeoffQueue = new TakeoffQueue();
+        landingQueue = new LandingQueue();
+        loadingAircraftMap =
+                new TreeMap<>(Comparator.comparing(Aircraft::getCallsign));
+
     }
 
     @Test
@@ -236,12 +248,35 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
+    public void readAircraftnullCallsign() {
+        try {
+            String line = "AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000" +
+                    ".00:false:145";
+            ControlTowerInitialiser.readAircraft(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //too many passsengers
+        }
+    }
+
+    @Test
     public void readTaskListBasic() {
         try {
             String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY";
             ControlTowerInitialiser.readTaskList(line);
         } catch (MalformedSaveException e) {
             fail();
+        }
+    }
+
+    @Test
+    public void readTaskListNull() {
+        try {
+            String line = "AWAY,AWAY,WAIT,WAIT,LOAD@60, ,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+
         }
     }
 
@@ -290,6 +325,39 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
+    public void readTaskListInvalidSymbol2() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60@,TAKEOFF,AWAY, ";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //null symbol
+        }
+    }
+
+    @Test
+    public void readTaskListInvalidSymbol3() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD 60,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //space between load and load percentage
+        }
+    }
+
+    @Test
+    public void readTaskListInvalidSymbol4() {
+        try {
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD 60,TAKEOFF,AWAY,";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //extra ','
+        }
+    }
+
+    @Test
     public void readTaskListTaskListRules() {
         try {
             String line = "TAKEOFF,AWAY,LAND,WAIT,WAIT,LOAD@60@,TAKEOFF,AWAY";
@@ -329,7 +397,17 @@ public class ControlTowerInitialiserTest {
             //breaks TaskList rules
         }
     }
-    
+
+    @Test
+    public void loadQueuesDefault() {
+
+    }
+
+    @Test
+    public void readQueueBasic() {
+
+    }
+
 
 
 }

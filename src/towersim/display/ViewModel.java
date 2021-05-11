@@ -128,6 +128,7 @@ public class ViewModel {
      */
     public EventHandler<ActionEvent> getDroneAlertHandler() {
         return null; // TODO implement for assignment 2
+
     }
 
     /**
