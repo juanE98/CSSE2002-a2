@@ -1,2 +1,3 @@
-VM options: --module-path "C:\Program Files\Java\javafx-sdk-11.0.2\lib" --add-modules=javafx.controls
+VM options PC: --module-path "C:\Program Files\Java\javafx-sdk-11.0.2\lib" --add-modules=javafx.controls
+VM options Mac: --module-path "Downloads\JavaFX11\lib" --add-modules=javafx.controls
 Program Args: saves/tick_basic.txt saves/aircraft_basic.txt saves/queues_basic.txt saves/terminalsWithGates_basic.txt

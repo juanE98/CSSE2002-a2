@@ -7,6 +7,8 @@ import javafx.scene.control.Alert;
 import towersim.aircraft.Aircraft;
 import towersim.control.ControlTower;
 import towersim.control.ControlTowerInitialiser;
+import towersim.control.LandingQueue;
+import towersim.control.TakeoffQueue;
 import towersim.ground.Gate;
 import towersim.ground.Terminal;
 import towersim.tasks.TaskType;
@@ -291,7 +293,51 @@ public class ViewModel {
      */
     public void saveAs(Writer tickWriter, Writer aircraftWriter, Writer queuesWriter,
             Writer terminalsWithGatesWriter) throws IOException {
-        // TODO implement for assignment 2
+        tickWriter.write(String.valueOf(tower.getTicksElapsed()));
+        tickWriter.flush();
+
+        int numAircraft = tower.getAircraft().size();
+        StringBuilder encodedAircraftList = new StringBuilder();
+        for (Aircraft aircraft : tower.getAircraft()) {
+            encodedAircraftList.append(aircraft.encode()).append(System.lineSeparator());
+        }
+        //remove last line
+        encodedAircraftList.delete(encodedAircraftList.length() - 1, encodedAircraftList.length());
+        aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s",numAircraft,
+                encodedAircraftList));
+        aircraftWriter.flush();
+
+        //encodedTakeoffQueue
+        TakeoffQueue takeoffQueue = new TakeoffQueue();
+        for (Aircraft aircraftTakeOff : allTakeoffAircraft) {
+            takeoffQueue.addAircraft(aircraftTakeOff);
+        }
+        //encodedLandingQueue
+        LandingQueue landingQueue = new LandingQueue();
+        for (Aircraft aircraftLanding : allLandAircraft) {
+            landingQueue.addAircraft(aircraftLanding);
+        }
+        //String reprsentation of callsignN:ticksRemainingN
+        StringBuilder callsignTicks = new StringBuilder();
+        for (Map.Entry<Aircraft,Integer> entry : tower.getLoadingAircraft().entrySet()) {
+            callsignTicks.append(entry.getKey().getCallsign()).append(":")
+                    .append(entry.getValue()).append(",");
+        }
+        callsignTicks.delete(callsignTicks.length() - 1, callsignTicks.length());
+        queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s" + System.lineSeparator() +
+                        "LoadingAircraft:%d" + System.lineSeparator() + "%s",
+                takeoffQueue.encode(), landingQueue.encode(),tower.getLoadingAircraft().size(), callsignTicks));
+        queuesWriter.flush();
+
+        int numTerminals = tower.getTerminals().size();
+        StringBuilder terminalsEncoded = new StringBuilder();
+        for (Terminal terminal : tower.getTerminals()) {
+            terminalsEncoded.append(terminal.encode()).append(System.lineSeparator());
+        }
+        terminalsEncoded.delete(terminalsEncoded.length() - 1, terminalsEncoded.length());
+        terminalsWithGatesWriter.write(String.format("%d" + System.lineSeparator() + "%s",
+                numTerminals, terminalsEncoded));
+        terminalsWithGatesWriter.flush();
     }
 
     /**
