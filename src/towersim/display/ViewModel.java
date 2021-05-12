@@ -293,51 +293,68 @@ public class ViewModel {
      */
     public void saveAs(Writer tickWriter, Writer aircraftWriter, Writer queuesWriter,
             Writer terminalsWithGatesWriter) throws IOException {
-        tickWriter.write(String.valueOf(tower.getTicksElapsed()));
-        tickWriter.flush();
+        try {
+            long ticksElapsed = tower.getTicksElapsed();
+            tickWriter.write(String.valueOf(ticksElapsed));
+            tickWriter.close();
 
-        int numAircraft = tower.getAircraft().size();
-        StringBuilder encodedAircraftList = new StringBuilder();
-        for (Aircraft aircraft : tower.getAircraft()) {
-            encodedAircraftList.append(aircraft.encode()).append(System.lineSeparator());
-        }
-        //remove last line
-        encodedAircraftList.delete(encodedAircraftList.length() - 1, encodedAircraftList.length());
-        aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s",numAircraft,
-                encodedAircraftList));
-        aircraftWriter.flush();
+            int numAircraft = tower.getAircraft().size();
+            StringBuilder encodedAircraftList = new StringBuilder();
+            if (numAircraft > 0) {
+                for (Aircraft aircraft : tower.getAircraft()) {
+                    encodedAircraftList.append(aircraft.encode()).append(System.lineSeparator());
+                }
+                //remove last line
+                encodedAircraftList.delete(encodedAircraftList.length() - 1, encodedAircraftList.length());
+            }
 
-        //encodedTakeoffQueue
-        TakeoffQueue takeoffQueue = new TakeoffQueue();
-        for (Aircraft aircraftTakeOff : allTakeoffAircraft) {
-            takeoffQueue.addAircraft(aircraftTakeOff);
-        }
-        //encodedLandingQueue
-        LandingQueue landingQueue = new LandingQueue();
-        for (Aircraft aircraftLanding : allLandAircraft) {
-            landingQueue.addAircraft(aircraftLanding);
-        }
-        //String reprsentation of callsignN:ticksRemainingN
-        StringBuilder callsignTicks = new StringBuilder();
-        for (Map.Entry<Aircraft,Integer> entry : tower.getLoadingAircraft().entrySet()) {
-            callsignTicks.append(entry.getKey().getCallsign()).append(":")
-                    .append(entry.getValue()).append(",");
-        }
-        callsignTicks.delete(callsignTicks.length() - 1, callsignTicks.length());
-        queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s" + System.lineSeparator() +
-                        "LoadingAircraft:%d" + System.lineSeparator() + "%s",
-                takeoffQueue.encode(), landingQueue.encode(),tower.getLoadingAircraft().size(), callsignTicks));
-        queuesWriter.flush();
+            aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s",numAircraft,
+                    encodedAircraftList));
+            aircraftWriter.close();
 
-        int numTerminals = tower.getTerminals().size();
-        StringBuilder terminalsEncoded = new StringBuilder();
-        for (Terminal terminal : tower.getTerminals()) {
-            terminalsEncoded.append(terminal.encode()).append(System.lineSeparator());
+
+            //encodedTakeoffQueue
+            TakeoffQueue takeoffQueue = new TakeoffQueue();
+            for (Aircraft aircraftTakeOff : allTakeoffAircraft) {
+                takeoffQueue.addAircraft(aircraftTakeOff);
+            }
+            //encodedLandingQueue
+            LandingQueue landingQueue = new LandingQueue();
+            for (Aircraft aircraftLanding : allLandAircraft) {
+                landingQueue.addAircraft(aircraftLanding);
+            }
+            //String reprsentation of callsignN:ticksRemainingN
+            StringBuilder callsignTicks = new StringBuilder();
+            int numLoadingAircraft = tower.getLoadingAircraft().size() ;
+            if (numLoadingAircraft > 0) {
+                for (Map.Entry<Aircraft,Integer> entry : tower.getLoadingAircraft().entrySet()) {
+                    callsignTicks.append(entry.getKey().getCallsign()).append(":")
+                            .append(entry.getValue()).append(",");
+                }
+                callsignTicks.delete(callsignTicks.length() - 1, callsignTicks.length());
+            }
+
+            queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s" + System.lineSeparator() +
+                            "LoadingAircraft:%d" + System.lineSeparator() + "%s",
+                    takeoffQueue.encode(), landingQueue.encode(), numLoadingAircraft,
+                    callsignTicks));
+            queuesWriter.close();
+
+            int numTerminals = tower.getTerminals().size();
+            StringBuilder terminalsEncoded = new StringBuilder();
+            if (numTerminals > 0) {
+                for (Terminal terminal : tower.getTerminals()) {
+                    terminalsEncoded.append(terminal.encode()).append(System.lineSeparator());
+                }
+                terminalsEncoded.delete(terminalsEncoded.length() - 1, terminalsEncoded.length());
+            }
+
+            terminalsWithGatesWriter.write(String.format("%d" + System.lineSeparator() + "%s",
+                    numTerminals, terminalsEncoded));
+            terminalsWithGatesWriter.close();
+        } catch (IOException e) {
+            throw new IOException();
         }
-        terminalsEncoded.delete(terminalsEncoded.length() - 1, terminalsEncoded.length());
-        terminalsWithGatesWriter.write(String.format("%d" + System.lineSeparator() + "%s",
-                numTerminals, terminalsEncoded));
-        terminalsWithGatesWriter.flush();
     }
 
     /**
