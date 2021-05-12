@@ -328,9 +328,12 @@ public class ControlTowerInitialiser {
                                   AircraftQueue queue) throws IOException, MalformedSaveException {
        int numAircraft;
        int numAircraftRead = 0;
+       //length of array with one colon as a delimeter
+       int colonsExpected = 2;
         try {
             String [] queueParts = reader.readLine().split(":");
-            if (queueParts.length > 2) {
+
+            if (queueParts.length != colonsExpected) {
                 throw new MalformedSaveException();
             }
             if (!queueParts[0].equals(queue.getClass().getSimpleName())) {
@@ -338,16 +341,20 @@ public class ControlTowerInitialiser {
             }
             numAircraft = Integer.parseInt(queueParts[1]);
             if (numAircraft > 0) {
-                String aircraftRead;
-                do {
-                    aircraftRead = reader.readLine();
+                String line;
+                line = reader.readLine();
+
+                while ((line = reader.readLine()) != null && !(line = reader.readLine()).startsWith(
+                        "LandingQueue") || !(line = reader.readLine()).startsWith(
+                        "LoadingAircraft")) {
+
                     numAircraftRead++;
                     boolean aircraftFound = false;
-                    if ( aircraftRead == null) {
+                    if ( line == null) {
                         throw new MalformedSaveException();
                     }
                     for (Aircraft aircraftListed : aircraft) {
-                        if (aircraftListed.getCallsign().equals(aircraftRead)) {
+                        if (aircraftListed.getCallsign().equals(line)) {
                             aircraftFound = true;
                             queue.addAircraft(aircraftListed);
                         }
@@ -355,7 +362,8 @@ public class ControlTowerInitialiser {
                     if (!aircraftFound) {
                         throw new MalformedSaveException();
                     }
-                } while (!aircraftRead.startsWith("Landing") || !aircraftRead.startsWith("Loading"));
+                }
+
             }
 
             if (numAircraft != numAircraftRead) {

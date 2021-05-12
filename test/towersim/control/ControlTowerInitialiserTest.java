@@ -3,11 +3,16 @@ package towersim.control;
 import org.junit.Before;
 import org.junit.Test;
 import towersim.aircraft.Aircraft;
+import towersim.aircraft.AircraftCharacteristics;
 import towersim.aircraft.PassengerAircraft;
+import towersim.tasks.Task;
+import towersim.tasks.TaskList;
+import towersim.tasks.TaskType;
 import towersim.util.MalformedSaveException;
 
 import javax.naming.ldap.Control;
 import java.io.*;
+import java.nio.Buffer;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -17,29 +22,109 @@ import static org.junit.Assert.*;
 
 public class ControlTowerInitialiserTest {
 
-    private Reader aircraftBasic;
-    private Reader aircraftDefault;
-    private Reader queuesBasic;
-    private Reader queuesDefault;
-    private Reader terminalsGatesBasic;
-    private Reader terminalGatesDefault;
-    private Reader tickBasic;
-    private Reader tickDefault;
+
     private Map<Aircraft,Integer> loadingAircraftMap;
     private TakeoffQueue takeoffQueue;
     private LandingQueue landingQueue;
-
+    private List<Aircraft> aircrafts;
+    private PassengerAircraft passengerAircraft1;
+    private PassengerAircraft passengerAircraft2;
+    private PassengerAircraft passengerAircraft3;
+    private PassengerAircraft passengerAircraftTakingOff;
+    private PassengerAircraft passengerAircraftLanding;
 
     @Before
     public void setUp() throws Exception {
-        aircraftBasic = new FileReader("saves/aircraft_basic.txt");
-        aircraftDefault = new FileReader("saves/aircraft_default.txt");
-        queuesBasic = new FileReader("saves/queues_basic.txt");
-        queuesDefault = new FileReader("saves/queues_default.txt");
-        terminalsGatesBasic = new FileReader("saves/terminalsWithGates_basic.txt");
-        terminalGatesDefault = new FileReader("saves/terminalsWithGates_default.txt");
-        tickBasic = new FileReader("saves/tick_basic.txt");
-        tickDefault = new FileReader("saves/tick_default.txt");
+
+        TaskList taskList1 = new TaskList(List.of(
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD, 100),
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT)));
+
+        TaskList taskList2 = new TaskList(List.of(
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD, 50),
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT)));
+
+        TaskList taskList3 = new TaskList(List.of(
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD, 35),
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT)));
+
+        TaskList taskListTakeoff = new TaskList(List.of(
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD, 100)));
+
+        TaskList taskListLand = new TaskList(List.of(
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD, 100),
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY)));
+
+        TaskList taskListLoad = new TaskList(List.of(
+                new Task(TaskType.LOAD, 70),
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.WAIT)));
+
+        TaskList taskListAway = new TaskList(List.of(
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD, 70),
+                new Task(TaskType.TAKEOFF),
+                new Task(TaskType.AWAY)));
+        this.passengerAircraft1 = new PassengerAircraft("VH-BFK",
+                AircraftCharacteristics.AIRBUS_A320,
+                taskList1,
+                AircraftCharacteristics.AIRBUS_A320.fuelCapacity / 10, 0);
+
+        this.passengerAircraft2 = new PassengerAircraft("ABC002",
+                AircraftCharacteristics.AIRBUS_A320,
+                taskList2,
+                AircraftCharacteristics.AIRBUS_A320.fuelCapacity / 2, 0);
+
+        this.passengerAircraft3 = new PassengerAircraft("ABC003",
+                AircraftCharacteristics.ROBINSON_R44,
+                taskList3,
+                AircraftCharacteristics.ROBINSON_R44.fuelCapacity / 2, 0);
+
+        this.passengerAircraftTakingOff = new PassengerAircraft("TAK001",
+                AircraftCharacteristics.AIRBUS_A320,
+                taskListTakeoff,
+                AircraftCharacteristics.AIRBUS_A320.fuelCapacity / 2, 100);
+
+        this.passengerAircraftLanding = new PassengerAircraft("LAN001",
+                AircraftCharacteristics.AIRBUS_A320,
+                taskListLand,
+                AircraftCharacteristics.AIRBUS_A320.fuelCapacity / 2, 100);
+
+        aircrafts = List.of(passengerAircraft1,passengerAircraft2,passengerAircraft3,
+                passengerAircraftTakingOff);
         takeoffQueue = new TakeoffQueue();
         landingQueue = new LandingQueue();
         loadingAircraftMap =
@@ -50,7 +135,8 @@ public class ControlTowerInitialiserTest {
     @Test
     public void loadAircraftDefault() {
         try {
-            ControlTowerInitialiser.loadAircraft(aircraftDefault);
+            String fileContents = "0";
+            ControlTowerInitialiser.loadAircraft(new StringReader(fileContents));
         } catch (IOException e) {
             fail();
         } catch (MalformedSaveException e) {
@@ -60,7 +146,13 @@ public class ControlTowerInitialiserTest {
 
     @Test public void loadAircraftBasic() {
         try {
-            ControlTowerInitialiser.loadAircraft(aircraftBasic);
+            String fileContents = String.join(System.lineSeparator(),"4", "QFA481:AIRBUS_A320" +
+                    ":AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000.00:false:132", "UTD302" +
+                    ":BOEING_787:WAIT,LOAD@100,TAKEOFF,AWAY,AWAY,AWAY,LAND:10000.00:false:0",
+                    "UPS119:BOEING_747_8F:WAIT,LOAD@50,TAKEOFF,AWAY,AWAY,AWAY,LAND:4000" +
+                            ".00:false:0", "VH-BFK:ROBINSON_R44:LAND,WAIT,LOAD@75,TAKEOFF,AWAY," +
+                            "AWAY:40.00:false:4");
+            ControlTowerInitialiser.loadAircraft(new StringReader(fileContents));
         } catch (IOException e) {
             fail();
         } catch (MalformedSaveException e) {
@@ -399,13 +491,47 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
-    public void loadQueuesDefault() {
+    public void loadQueuesBasic() {
+        String fileContents = String.join(System.lineSeparator(), "TakeoffQueue:0", "LandingQueue" +
+                ":1", "VH-BFK", "LoadingAircraft:0");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+        } catch (MalformedSaveException e) {
+            fail();
 
+        } catch (IOException e) {
+            fail();
+        }
     }
 
     @Test
-    public void readQueueBasic() {
+    public void loadQueuesDefault() {
+        String fileContents = String.join(System.lineSeparator(), "TakeoffQueue:0", "LandingQueue" +
+                ":0", "LoadingAircraft:0");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+        } catch (MalformedSaveException e) {
+            fail();
 
+        } catch (IOException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void readQueueDefault() {
+        String fileContents = String.join(System.lineSeparator(), "TakeoffQueue:0", "LandingQueue" +
+                ":0", "LoadingAircraft:0");
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+            fail();
+        }
     }
 
 
