@@ -80,6 +80,12 @@ public class ViewModel {
     /** File path of the terminals with gates file that we loaded from */
     private final String defaultTerminalsSaveLocation;
 
+    /** event handler for when the "Drone Alert" button is clicked. */
+    private EventHandler<ActionEvent> dronAlertClicked;
+
+    /** event handler for when the "Clear Drone Alert" button is clicked */
+    private EventHandler<ActionEvent> clearDronAlertClicked;
+
     /**
      * Creates a new view model and constructs a control tower by reading from the given filenames.
      *
@@ -127,8 +133,16 @@ public class ViewModel {
      * @ass2
      */
     public EventHandler<ActionEvent> getDroneAlertHandler() {
-        return null; // TODO implement for assignment 2
-
+        dronAlertClicked = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (Terminal terminal : tower.getTerminals()) {
+                    terminal.declareEmergency();
+                }
+                registerChange();
+            }
+        };
+        return dronAlertClicked;
     }
 
     /**
@@ -141,7 +155,16 @@ public class ViewModel {
      * @ass2
      */
     public EventHandler<ActionEvent> getDroneClearHandler() {
-        return null; // TODO implement for assignment 2
+        clearDronAlertClicked = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (Terminal terminal : tower.getTerminals()) {
+                    terminal.clearEmergency();
+                }
+                registerChange();
+            }
+        };
+        return clearDronAlertClicked;
     }
 
     /**

@@ -286,12 +286,7 @@ public class ControlTowerInitialiser {
         try {
             readQueue(file, aircraft, takeoffQueue);
             readQueue(file,aircraft,landingQueue);
-
-
             readLoadingAircraft(file, aircraft, loadingAircraft);
-
-
-
         } catch (IOException e) {
             throw new IOException();
         } catch (MalformedSaveException e) {
@@ -438,6 +433,7 @@ public class ControlTowerInitialiser {
                         if (aircraftParked.getCallsign().equals(loadingMap[0])) {
                             aircraftFound = true;
                             loadingAircraft.put(aircraftParked, ticksRemaining);
+                            break;
                         }
                     }
                     if (!aircraftFound) {

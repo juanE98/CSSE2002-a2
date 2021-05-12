@@ -32,6 +32,7 @@ public class ControlTowerInitialiserTest {
     private PassengerAircraft passengerAircraft3;
     private PassengerAircraft passengerAircraftTakingOff;
     private PassengerAircraft passengerAircraftLanding;
+    private PassengerAircraft passengerAircraftLoading;
 
     @Before
     public void setUp() throws Exception {
@@ -122,9 +123,13 @@ public class ControlTowerInitialiserTest {
                 AircraftCharacteristics.AIRBUS_A320,
                 taskListLand,
                 AircraftCharacteristics.AIRBUS_A320.fuelCapacity / 2, 100);
+        this.passengerAircraftLoading = new PassengerAircraft("LOD001",
+                AircraftCharacteristics.AIRBUS_A320,
+                taskListLoad,
+                AircraftCharacteristics.AIRBUS_A320.fuelCapacity / 8, 0);
 
         aircrafts = List.of(passengerAircraft1,passengerAircraft2,passengerAircraft3,
-                passengerAircraftTakingOff);
+                passengerAircraftTakingOff,passengerAircraftLoading);
         takeoffQueue = new TakeoffQueue();
         landingQueue = new LandingQueue();
         loadingAircraftMap =
@@ -316,6 +321,18 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
+    public void readAircraftCallsignEquals() {
+        try {
+            String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000" +
+                    ".00:false:132";
+            Aircraft aircraftCompare = ControlTowerInitialiser.readAircraft(line);
+            assertEquals("QFA481", aircraftCompare.getCallsign());
+        } catch (MalformedSaveException e) {
+            fail();
+        }
+    }
+
+    @Test
     public void readAircraftCargoNegative() {
         try {
             String line = "QFA481:AIRBUS_A320:AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60,TAKEOFF,AWAY:10000" +
@@ -419,11 +436,11 @@ public class ControlTowerInitialiserTest {
     @Test
     public void readTaskListInvalidSymbol2() {
         try {
-            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60@,TAKEOFF,AWAY, ";
+            String line = "AWAY,AWAY,LAND,WAIT,WAIT,LOAD@60@65,TAKEOFF,AWAY";
             ControlTowerInitialiser.readTaskList(line);
             fail();
         } catch (MalformedSaveException e) {
-            //null symbol
+            //more than one @ symbol
         }
     }
 
@@ -453,6 +470,17 @@ public class ControlTowerInitialiserTest {
     public void readTaskListTaskListRules() {
         try {
             String line = "TAKEOFF,AWAY,LAND,WAIT,WAIT,LOAD@60@,TAKEOFF,AWAY";
+            ControlTowerInitialiser.readTaskList(line);
+            fail();
+        } catch (MalformedSaveException e) {
+            //breaks TaskList rules
+        }
+    }
+
+    @Test
+    public void readTaskListTaskListRulesMultipleSymbol() {
+        try {
+            String line = "TAKEOFF,AWAY,LAND,WAIT,WAIT,LOAD@60@65,TAKEOFF,AWAY";
             ControlTowerInitialiser.readTaskList(line);
             fail();
         } catch (MalformedSaveException e) {
@@ -543,6 +571,26 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
+    public void loadQueuesThree() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:1",
+                "ABC002",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:1",
+                "LOD001:3");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+        } catch (MalformedSaveException e) {
+            fail();
+
+        } catch (IOException e) {
+            fail();
+        }
+    }
+
+    @Test
     public void readQueueDefault() {
         String fileContents = String.join(System.lineSeparator(), "TakeoffQueue:0", "LandingQueue" +
                 ":0", "LoadingAircraft:0");
@@ -556,6 +604,32 @@ public class ControlTowerInitialiserTest {
         }
     }
 
+    @Test
+    public void readQueueBasic() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:1",
+                "ABC002",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+            fail();
+        }
+    }
 
+    @Test
+    public void loadTerminalsWithGatesBasic() {
+
+    }
+
+    @Test
+    public void loadTerminalsWithGatesDefault() {
+
+    }
 
 }
