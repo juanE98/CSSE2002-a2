@@ -284,9 +284,16 @@ public class ControlTowerInitialiser {
         }
         BufferedReader file = new BufferedReader(reader);
         try {
+
             readQueue(file, aircraft, takeoffQueue);
             readQueue(file,aircraft,landingQueue);
-            readLoadingAircraft(file, aircraft, loadingAircraft);
+
+            String line;
+            while ((line = file.readLine()) != null) {
+                if (line.startsWith("LoadingAircraft")) {
+                    readLoadingAircraft(file, aircraft, loadingAircraft);
+                }
+            }
         } catch (IOException e) {
             throw new IOException();
         } catch (MalformedSaveException e) {
@@ -332,7 +339,6 @@ public class ControlTowerInitialiser {
        int colonsExpected = 2;
         try {
             String [] queueParts = reader.readLine().split(":");
-
             if (queueParts.length != colonsExpected) {
                 throw new MalformedSaveException();
             }
@@ -341,31 +347,26 @@ public class ControlTowerInitialiser {
             }
             numAircraft = Integer.parseInt(queueParts[1]);
             if (numAircraft > 0) {
-                String line;
-                line = reader.readLine();
-
-                while ((line = reader.readLine()) != null && !(line = reader.readLine()).startsWith(
-                        "LandingQueue") || !(line = reader.readLine()).startsWith(
-                        "LoadingAircraft")) {
-
+                String line = reader.readLine();
+                do {
                     numAircraftRead++;
                     boolean aircraftFound = false;
-                    if ( line == null) {
+                    if (line == null) {
                         throw new MalformedSaveException();
                     }
                     for (Aircraft aircraftListed : aircraft) {
                         if (aircraftListed.getCallsign().equals(line)) {
                             aircraftFound = true;
                             queue.addAircraft(aircraftListed);
+                            line = reader.readLine();
+                            break;
                         }
                     }
                     if (!aircraftFound) {
                         throw new MalformedSaveException();
                     }
-                }
-
+                } while (!(line.startsWith("LandingQueue") || line.startsWith("LoadingAircraft")));
             }
-
             if (numAircraft != numAircraftRead) {
                 throw new MalformedSaveException();
             }

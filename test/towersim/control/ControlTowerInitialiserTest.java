@@ -499,7 +499,6 @@ public class ControlTowerInitialiserTest {
                     landingQueue,loadingAircraftMap);
         } catch (MalformedSaveException e) {
             fail();
-
         } catch (IOException e) {
             fail();
         }
