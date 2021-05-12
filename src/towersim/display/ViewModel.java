@@ -86,6 +86,9 @@ public class ViewModel {
     /** event handler for when the "Clear Drone Alert" button is clicked */
     private EventHandler<ActionEvent> clearDronAlertClicked;
 
+    /** event handler for when the "Find Gate for Selected Aircraft" button is clicked */
+    private EventHandler<ActionEvent> findSuitableGateClicked;
+
     /**
      * Creates a new view model and constructs a control tower by reading from the given filenames.
      *
@@ -193,7 +196,29 @@ public class ViewModel {
      * @ass2
      */
     public EventHandler<ActionEvent> getFindSuitableGateHandler() {
-        return null; // TODO implement for assignment 2
+        findSuitableGateClicked = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (getSelectedAircraft() == null) {
+                    return;
+                }
+                //aircraft selected
+                Aircraft aircraft = getSelectedAircraft().get();
+                //currently selected aircraft's current task type
+                TaskType currentTask =
+                        aircraft.getTaskList().getCurrentTask().getType();
+                if ( currentTask != TaskType.LAND) {
+                    return;
+                }
+                try {
+                    Gate gateUnoccupied = tower.findUnoccupiedGate(aircraft);
+                    suitableGateText.set(gateUnoccupied.toString());
+                } catch (NoSuitableGateException e) {
+                    suitableGateText.set("NoSuitableGateException");
+                }
+            }
+        };
+        return findSuitableGateClicked;
     }
 
     /**
