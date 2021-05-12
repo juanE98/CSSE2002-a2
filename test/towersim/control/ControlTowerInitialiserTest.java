@@ -492,10 +492,14 @@ public class ControlTowerInitialiserTest {
 
     @Test
     public void loadQueuesBasic() {
-        String fileContents = String.join(System.lineSeparator(), "TakeoffQueue:0", "LandingQueue" +
-                ":1", "VH-BFK", "LoadingAircraft:0");
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:0",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
         try {
-            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,
+                    takeoffQueue,
                     landingQueue,loadingAircraftMap);
         } catch (MalformedSaveException e) {
             fail();
@@ -508,6 +512,25 @@ public class ControlTowerInitialiserTest {
     public void loadQueuesDefault() {
         String fileContents = String.join(System.lineSeparator(), "TakeoffQueue:0", "LandingQueue" +
                 ":0", "LoadingAircraft:0");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+        } catch (MalformedSaveException e) {
+            fail();
+
+        } catch (IOException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void loadQueuesBoth() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:1",
+                "ABC002",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
         try {
             ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
                     landingQueue,loadingAircraftMap);

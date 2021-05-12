@@ -284,16 +284,14 @@ public class ControlTowerInitialiser {
         }
         BufferedReader file = new BufferedReader(reader);
         try {
-
             readQueue(file, aircraft, takeoffQueue);
             readQueue(file,aircraft,landingQueue);
 
-            String line;
-            while ((line = file.readLine()) != null) {
-                if (line.startsWith("LoadingAircraft")) {
-                    readLoadingAircraft(file, aircraft, loadingAircraft);
-                }
-            }
+
+            readLoadingAircraft(file, aircraft, loadingAircraft);
+
+
+
         } catch (IOException e) {
             throw new IOException();
         } catch (MalformedSaveException e) {
@@ -335,6 +333,7 @@ public class ControlTowerInitialiser {
                                   AircraftQueue queue) throws IOException, MalformedSaveException {
        int numAircraft;
        int numAircraftRead = 0;
+        String line;
        //length of array with one colon as a delimeter
        int colonsExpected = 2;
         try {
@@ -347,8 +346,8 @@ public class ControlTowerInitialiser {
             }
             numAircraft = Integer.parseInt(queueParts[1]);
             if (numAircraft > 0) {
-                String line = reader.readLine();
                 do {
+                    line = reader.readLine();
                     numAircraftRead++;
                     boolean aircraftFound = false;
                     if (line == null) {
@@ -358,14 +357,13 @@ public class ControlTowerInitialiser {
                         if (aircraftListed.getCallsign().equals(line)) {
                             aircraftFound = true;
                             queue.addAircraft(aircraftListed);
-                            line = reader.readLine();
                             break;
                         }
                     }
                     if (!aircraftFound) {
                         throw new MalformedSaveException();
                     }
-                } while (!(line.startsWith("LandingQueue") || line.startsWith("LoadingAircraft")));
+                } while (numAircraftRead < numAircraft);
             }
             if (numAircraft != numAircraftRead) {
                 throw new MalformedSaveException();
