@@ -571,6 +571,65 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
+    public void loadQueues2Takeoff() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:2",
+                "ABC002",
+                "ABC003",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+            fail();
+        } catch (MalformedSaveException e) {
+
+
+        } catch (IOException e) {
+            fail();
+        }
+    }@Test
+    public void loadQueuesWrongQueue() {
+        String fileContents = String.join(System.lineSeparator(),
+                "LandingQueue:2",
+                "ABC002",
+                "ABC003",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+            fail();
+        } catch (MalformedSaveException e) {
+
+
+        } catch (IOException e) {
+            fail();
+        }
+    }
+    @Test
+    public void loadQueuesWrongQueue2() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:2",
+                "ABC002",
+                "ABC003",
+                "TakeoffQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
+        try {
+            ControlTowerInitialiser.loadQueues(new StringReader(fileContents),aircrafts,takeoffQueue,
+                    landingQueue,loadingAircraftMap);
+            fail();
+        } catch (MalformedSaveException e) {
+
+        } catch (IOException e) {
+            fail();
+        }
+    }
+
+    @Test
     public void loadQueuesThree() {
         String fileContents = String.join(System.lineSeparator(),
                 "TakeoffQueue:1",
@@ -650,6 +709,66 @@ public class ControlTowerInitialiserTest {
             fail();
         } catch (IOException e) {
 
+        } catch (MalformedSaveException e) {
+
+        }
+    }
+
+    @Test
+    public void readQueueValid() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:1",
+                "ABC002",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:1",
+                "LOD001:3");
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void readQueue2Aircraft() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:2",
+                "ABC002,ABC003",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:1",
+                "LOD001:3");
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void readQueue2Aircraft1Wrong() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:2",
+                "ABC002,ABC0099",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:1",
+                "LOD001:3");
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+            fail();
+        } catch (IOException e) {
+            fail();
         } catch (MalformedSaveException e) {
 
         }

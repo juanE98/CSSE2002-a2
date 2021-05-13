@@ -354,28 +354,29 @@ public class ControlTowerInitialiser {
             }
             numAircraft = Integer.parseInt(queueParts[1]);
             if (numAircraft > 0) {
-                do {
-                    line = reader.readLine();
-                    numAircraftRead++;
+                String [] aircraftsInQueue = reader.readLine().split(",");
+                if (aircraftsInQueue.length == 0) {
+                    throw new MalformedSaveException();
+                }
+                numAircraftRead = aircraftsInQueue.length;
+                if (numAircraft != numAircraftRead) {
+                    throw new MalformedSaveException();
+                }
+                for (String aircraftRead : aircraftsInQueue) {
                     boolean aircraftFound = false;
-                    if (line == null || line.isBlank()) {
-                        throw new MalformedSaveException();
-                    }
                     for (Aircraft aircraftListed : aircraft) {
-                        if (aircraftListed.getCallsign().equals(line)) {
+                        String aircraftCallsign = aircraftListed.getCallsign();
+                        if (aircraftCallsign.equals(aircraftRead)) {
                             aircraftFound = true;
                             queue.addAircraft(aircraftListed);
-                            break;
                         }
                     }
                     if (!aircraftFound) {
                         throw new MalformedSaveException();
                     }
-                } while (numAircraftRead < numAircraft);
+                }
             }
-            if (numAircraft != numAircraftRead) {
-                throw new MalformedSaveException();
-            }
+
         } catch (IOException e) {
             throw new IOException();
         } catch (IllegalArgumentException | NullPointerException e) {
