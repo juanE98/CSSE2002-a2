@@ -776,12 +776,117 @@ public class ControlTowerInitialiserTest {
 
     @Test
     public void loadTerminalsWithGatesBasic() {
+        String fileContents = String.join(System.lineSeparator(),
+                "5",
+                "AirplaneTerminal:1:false:6",
+                "1:UTD302",
+                "2:empty",
+                "3:empty",
+                "4:empty",
+                "5:empty",
+                "6:empty",
+                "HelicopterTerminal:2:false:5",
+                "7:empty",
+                "8:empty",
+                "9:empty",
+                "10:empty",
+                "11:empty",
+                "AirplaneTerminal:3:false:2",
+                "12:empty",
+                "13:UPS119",
+                "HelicopterTerminal:4:true:0",
+                "HelicopterTerminal:5:false:0");
 
+        try {
+            ControlTowerInitialiser.loadTerminalsWithGates(new StringReader(fileContents),
+                    aircrafts);
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+            fail();
+        }
     }
 
     @Test
     public void loadTerminalsWithGatesDefault() {
+        String fileContents = "0";
 
+        try {
+            ControlTowerInitialiser.loadTerminalsWithGates(new StringReader(fileContents),
+                    aircrafts);
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void loadTerminalsWithGatesWrongTerminalNumber() {
+        String fileContents = String.join(System.lineSeparator(),
+                "3",
+                "AirplaneTerminal:1:false:6",
+                "1:UTD302",
+                "2:empty",
+                "3:empty",
+                "4:empty",
+                "5:empty",
+                "6:empty",
+                "HelicopterTerminal:2:false:5",
+                "7:empty",
+                "8:empty",
+                "9:empty",
+                "10:empty",
+                "11:empty",
+                "AirplaneTerminal:3:false:2",
+                "12:empty",
+                "13:UPS119",
+                "HelicopterTerminal:4:true:0",
+                "HelicopterTerminal:5:false:0");
+
+        try {
+            ControlTowerInitialiser.loadTerminalsWithGates(new StringReader(fileContents),
+                    aircrafts);
+            fail();
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+
+        }
+    }
+
+    @Test
+    public void loadTerminalsWithGatesWrongTerminalNumber2() {
+        String fileContents = String.join(System.lineSeparator(),
+                "6",
+                "AirplaneTerminal:1:false:6",
+                "1:UTD302",
+                "2:empty",
+                "3:empty",
+                "4:empty",
+                "5:empty",
+                "6:empty",
+                "HelicopterTerminal:2:false:5",
+                "7:empty",
+                "8:empty",
+                "9:empty",
+                "10:empty",
+                "11:empty",
+                "AirplaneTerminal:3:false:2",
+                "12:empty",
+                "13:UPS119",
+                "HelicopterTerminal:4:true:0",
+                "HelicopterTerminal:5:false:0");
+
+        try {
+            ControlTowerInitialiser.loadTerminalsWithGates(new StringReader(fileContents),
+                    aircrafts);
+            fail();
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+
+        }
     }
 
 }
