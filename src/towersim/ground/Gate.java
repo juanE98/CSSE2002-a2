@@ -120,7 +120,7 @@ public class Gate {
      * @return hash code of this gate
      */
     @Override
-    public int hashCode(){
+    public int hashCode() {
         int aircraftHash = 0;
         if (this.getAircraftAtGate() != null) {
             aircraftHash = this.getAircraftAtGate().hashCode();
@@ -155,7 +155,8 @@ public class Gate {
      * gateNumber:callsign
      * where
      * gateNumber is the gate number of this gate
-     * callsign is the callsign of the aircraft parked at this gate, or empty if the gate is unoccupied
+     * callsign is the callsign of the aircraft parked at this gate, or empty if the gate is
+     * unoccupied
      * For example:
      * 12:ABC102
      * For example:
@@ -166,6 +167,6 @@ public class Gate {
         if (this.getAircraftAtGate() == null) {
             return String.format("%d:empty", this.gateNumber);
         }
-        return String.format("%d:%s", this.gateNumber,this.getAircraftAtGate().getCallsign());
+        return String.format("%d:%s", this.gateNumber, this.getAircraftAtGate().getCallsign());
     }
 }

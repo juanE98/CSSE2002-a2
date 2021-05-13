@@ -149,7 +149,8 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
 
     /**
      * Unloads the aircraft of all cargo (passengers/freight) it is currently carrying.
-     * This action should be performed instantly. After calling unload(), OccupancyLevel.calculateOccupancyLevel()
+     * This action should be performed instantly. After calling unload(),  OccupancyLevel
+     * .calculateOccupancyLevel()
      * should return 0 to indicate that the aircraft is empty.
      */
     public abstract void unload();
@@ -201,7 +202,7 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
      * @return true if equal, false otherwise
      */
     @Override
-    public boolean equals (Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
@@ -273,7 +274,7 @@ public abstract class Aircraft implements OccupancyLevel, Tickable, EmergencySta
      * @return encoded string representation of this aircraft
      */
     public String encode() {
-        return String.format("%s:%s:%s:%.2f:%s",this.getCallsign(), this.characteristics.name(),
+        return String.format("%s:%s:%s:%.2f:%s", this.getCallsign(), this.characteristics.name(),
                 getTaskList().encode(), this.getFuelAmount(), this.emergency);
     }
 

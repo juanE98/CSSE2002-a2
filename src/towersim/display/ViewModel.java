@@ -300,6 +300,7 @@ public class ViewModel {
 
             int numAircraft = tower.getAircraft().size();
             StringBuilder encodedAircraftList = new StringBuilder();
+            //Write as Default file
             if (numAircraft > 0) {
                 for (Aircraft aircraft : tower.getAircraft()) {
                     encodedAircraftList.append(aircraft.encode()).append(System.lineSeparator());
@@ -307,8 +308,9 @@ public class ViewModel {
                 //remove last line
                 encodedAircraftList.delete(encodedAircraftList.length() - 1,
                         encodedAircraftList.length());
-                aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s", numAircraft,
-                        encodedAircraftList));
+                aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s",
+                        numAircraft, encodedAircraftList));
+                //Write as Basic file
             } else {
                 aircraftWriter.write(String.format("%d", numAircraft));
             }
@@ -327,6 +329,7 @@ public class ViewModel {
             //String reprsentation of callsignN:ticksRemainingN
             StringBuilder callsignTicks = new StringBuilder();
             int numLoadingAircraft = tower.getLoadingAircraft().size();
+            //Write as default file
             if (numLoadingAircraft > 0) {
                 for (Map.Entry<Aircraft, Integer> entry : tower.getLoadingAircraft().entrySet()) {
                     callsignTicks.append(entry.getKey().getCallsign()).append(":")
@@ -334,9 +337,10 @@ public class ViewModel {
                 }
                 callsignTicks.delete(callsignTicks.length() - 1, callsignTicks.length());
                 queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s"
-                                + System.lineSeparator() + "LoadingAircraft:%d" + System.lineSeparator()
-                                + "%s", takeoffQueue.encode(), landingQueue.encode(), numLoadingAircraft,
-                        callsignTicks));
+                                + System.lineSeparator() + "LoadingAircraft:%d"
+                                + System.lineSeparator() + "%s", takeoffQueue.encode(),
+                        landingQueue.encode(), numLoadingAircraft, callsignTicks));
+                //Write as Basic file
             } else {
                 queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s"
                                 + System.lineSeparator() + "LoadingAircraft:%d",
@@ -344,8 +348,10 @@ public class ViewModel {
             }
             queuesWriter.close();
 
+
             int numTerminals = tower.getTerminals().size();
             StringBuilder terminalsEncoded = new StringBuilder();
+            //Write as default file
             if (numTerminals > 0) {
                 for (Terminal terminal : tower.getTerminals()) {
                     terminalsEncoded.append(terminal.encode()).append(System.lineSeparator());
@@ -353,6 +359,7 @@ public class ViewModel {
                 terminalsEncoded.delete(terminalsEncoded.length() - 1, terminalsEncoded.length());
                 terminalsWithGatesWriter.write(String.format("%d" + System.lineSeparator() + "%s",
                         numTerminals, terminalsEncoded));
+                //Write as Basic file
             } else {
                 terminalsWithGatesWriter.write(String.format("%d",
                         numTerminals));

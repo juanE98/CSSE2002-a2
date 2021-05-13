@@ -36,7 +36,8 @@ public class TakeoffQueue extends AircraftQueue {
     /**
      * Returns the aircraft at the front of the queue without removing it from the queue, or null
      * if the queue is empty.
-     * Aircraft returned by peekAircraft() should be in the same order that they were added via addAircraft().
+     * Aircraft returned by peekAircraft() should be in the same order that they were added via
+     * addAircraft().
      * @return aircraft at front of queue
      */
     @Override
@@ -45,7 +46,8 @@ public class TakeoffQueue extends AircraftQueue {
     }
 
     /**
-     * Removes and returns the aircraft at the front of the queue. Returns null if the queue is empty.
+     * Removes and returns the aircraft at the front of the queue. Returns null if the queue is
+     * empty.
      * Aircraft returned by removeAircraft() should be in the same order that they were added via
      * addAircraft().
      * @return aircraft at front of queue
@@ -69,7 +71,7 @@ public class TakeoffQueue extends AircraftQueue {
      */
     @Override
     public List<Aircraft> getAircraftInOrder() {
-        List<Aircraft> InOrder = new LinkedList<>();
+        List<Aircraft> aircraftInOrder = new LinkedList<>();
 
         TakeoffQueue takeoffQueueCopy = new TakeoffQueue();
         for (Aircraft aircraft : this.takeoffQueue) {
@@ -77,9 +79,9 @@ public class TakeoffQueue extends AircraftQueue {
         }
 
         for (int i = 0; i < this.takeoffQueue.size(); i++) {
-            InOrder.add(takeoffQueueCopy.removeAircraft());
+            aircraftInOrder.add(takeoffQueueCopy.removeAircraft());
         }
-        return InOrder;
+        return aircraftInOrder;
     }
 
     /**

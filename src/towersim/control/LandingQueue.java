@@ -11,7 +11,8 @@ import java.util.Queue;
 /**
  * Represents a rule-based queue of aircraft waiting in the air to land.
  * The rules in the landing queue are designed to ensure that aircraft are prioritised for
- * landing based on "urgency" factors such as remaining fuel onboard, emergency status and cargo type.
+ * landing based on "urgency" factors such as remaining fuel onboard, emergency status and cargo
+ * type.
  */
 public class LandingQueue extends AircraftQueue {
 
@@ -35,7 +36,8 @@ public class LandingQueue extends AircraftQueue {
     }
 
     /**
-     * Returns the aircraft at the front of the queue without removing it from the queue, or null if the queue is empty.
+     * Returns the aircraft at the front of the queue without removing it from the queue, or null
+     * if the queue is empty.
      * The rules for determining which aircraft in the queue should be returned next are as follows:
      *
      * If an aircraft is currently in a state of emergency, it should be returned. If more than
@@ -43,8 +45,10 @@ public class LandingQueue extends AircraftQueue {
      * If an aircraft has less than or equal to 20 percent fuel remaining, a critical level, it
      * should be returned (see Aircraft.getFuelPercentRemaining()). If more than one aircraft
      * have  a critical level of fuel onboard, return the one added to the queue first.
-     * If there are any passenger aircraft in the queue, return the passenger aircraft that was added to the queue first.
-     * If this point is reached and no aircraft has been returned, return the aircraft that was added to the queue first.
+     * If there are any passenger aircraft in the queue, return the passenger aircraft that was
+     * added to the queue first.
+     * If this point is reached and no aircraft has been returned, return the aircraft that was
+     * added to the queue first.
      * @return aircraft at front of queue
      */
     @Override
@@ -68,7 +72,8 @@ public class LandingQueue extends AircraftQueue {
     }
 
     /**
-     * Removes and returns the aircraft at the front of the queue. Returns null if the queue is empty.
+     * Removes and returns the aircraft at the front of the queue. Returns null if the queue is
+     * empty.
      * The same rules as described in peekAircraft() should be used for determining which
      * aircraft to remove and return.
      * @return aircraft at front of queue
@@ -93,7 +98,7 @@ public class LandingQueue extends AircraftQueue {
     @Override
     public List<Aircraft> getAircraftInOrder() {
         //List to be returned
-        List<Aircraft> InOrder = new LinkedList<>();
+        List<Aircraft> aircraftInOrder = new LinkedList<>();
 
         //Copy of LandingQueue
         LandingQueue landingQueueCopy = new LandingQueue();
@@ -103,9 +108,9 @@ public class LandingQueue extends AircraftQueue {
 
         //Order the aircrafts in copy
         for (int i = 0; i < this.landingQueue.size(); i++) {
-            InOrder.add(landingQueueCopy.removeAircraft());
+            aircraftInOrder.add(landingQueueCopy.removeAircraft());
         }
-        return InOrder;
+        return aircraftInOrder;
     }
 
     /**

@@ -111,11 +111,11 @@ public class Task {
     /**
      * Returns true if and only if this task is equal to the other given task.
      * For two tasks to be equal, they must have the same task type and load percentage.
-     * @param obj
-     * @return
+     * @param obj other object to check equality
+     * @return true if equal, false otherwise
      */
     @Override
-    public boolean equals (Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }

@@ -623,6 +623,39 @@ public class ControlTowerInitialiserTest {
     }
 
     @Test
+    public void readQueueExtraSpace() {
+        String fileContents = String.join(System.lineSeparator(),
+                "TakeoffQueue:1",
+                " ",
+                "LandingQueue:1",
+                "VH-BFK",
+                "LoadingAircraft:0");
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+            fail();
+        } catch (IOException e) {
+            fail();
+        } catch (MalformedSaveException e) {
+
+        }
+    }
+
+    @Test
+    public void readQueueInvalid1() {
+        String fileContents = " ";
+        BufferedReader br = new BufferedReader(new StringReader(fileContents));
+        try {
+            ControlTowerInitialiser.readQueue(br,aircrafts,takeoffQueue);
+            fail();
+        } catch (IOException e) {
+
+        } catch (MalformedSaveException e) {
+
+        }
+    }
+
+    @Test
     public void loadTerminalsWithGatesBasic() {
 
     }

@@ -242,7 +242,9 @@ public abstract class Terminal implements EmergencyState, OccupancyLevel {
      * terminalNumber is the terminal number of this terminal
      * emergency is whether or not this terminal is in a state of emergency
      * numGates is the number of gates in this terminal
-     * encodedGateX is the encoded representation of the Xth gate in this terminal, for X between 1 and N inclusive, where N is the number of gates, in the same order as returned by getGates()
+     * encodedGateX is the encoded representation of the Xth gate in this terminal, for X between
+     * 1 and N inclusive, where N is the number of gates, in the same order as returned by
+     * getGates()
      * For example:
      * HelicopterTerminal:3:false:0
      * For example:

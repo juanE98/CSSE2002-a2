@@ -38,8 +38,7 @@ public class TaskList {
 
             if (i + 1 >= tasks.size()) {
                 nextTask = tasks.get(0).getType();
-            }
-            else {
+            } else {
                 nextTask = tasks.get(i + 1).getType();
             }
 

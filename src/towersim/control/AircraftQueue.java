@@ -22,7 +22,8 @@ public abstract class AircraftQueue implements Encodable {
     public abstract void addAircraft(Aircraft aircraft);
 
     /**
-     * Removes and returns the aircraft at the front of the queue. Returns null if the queue is empty.
+     * Removes and returns the aircraft at the front of the queue. Returns null if the queue is
+     * empty.
      * @return aircraft at front of queue
      */
     public abstract Aircraft removeAircraft();
@@ -57,7 +58,8 @@ public abstract class AircraftQueue implements Encodable {
      *
      * QueueType [callsign1, callsign2, ..., callsignN]
      * where QueueType is the concrete queue class (i.e. LandingQueue or TakeoffQueue) and
-     * callsign1 through callsignN are the callsigns of all aircraft in the queue, in queue order (see getAircraftInOrder()).
+     * callsign1 through callsignN are the callsigns of all aircraft in the queue, in queue order
+     * (see getAircraftInOrder()).
      * For example, "LandingQueue [ABC123, XYZ987, BOB555]" for a landing queue with three
      * aircraft  and "TakeoffQueue []" for a takeoff queue with no aircraft.
      * @return string representation of this queue
@@ -78,7 +80,8 @@ public abstract class AircraftQueue implements Encodable {
      * QueueType is the simple class name of this queue, e.g. LandingQueue
      * numAircraft is the number of aircraft currently waiting in the queue
      * callsignX is the callsign of the Xth aircraft in the queue, in the same order as returned
-     * by getAircraftInOrder(), for X between 1 and N inclusive, where N is the number of aircraft in the queue
+     * by getAircraftInOrder(), for X between 1 and N inclusive, where N is the number of
+     * aircraft  in the queue
      * For example:
      * LandingQueue:0
      * For example:
@@ -88,7 +91,8 @@ public abstract class AircraftQueue implements Encodable {
      */
     public String encode() {
         StringBuilder encodedString = new StringBuilder();
-        encodedString.append(this.getClass().getSimpleName()).append(":").append(this.getAircraftInOrder().size());
+        encodedString.append(this.getClass().getSimpleName()).append(":")
+                .append(this.getAircraftInOrder().size());
         encodedString.append(System.lineSeparator());
         encodedString.append(this.callsignList(true));
         return String.valueOf(encodedString);
@@ -103,8 +107,7 @@ public abstract class AircraftQueue implements Encodable {
         StringBuilder aircraftsCallsign = new StringBuilder();
         List<Aircraft> aircraftInOrder = this.getAircraftInOrder();
         if (aircraftInOrder != null && !(aircraftInOrder.isEmpty())) {
-            if (!encode)
-            {
+            if (!encode) {
                 for (Aircraft aircraft : aircraftInOrder) {
                     aircraftsCallsign.append(aircraft.getCallsign()).append(", ");
                 }
@@ -112,8 +115,7 @@ public abstract class AircraftQueue implements Encodable {
                     aircraftsCallsign.delete(aircraftsCallsign.length() - 2,
                             aircraftsCallsign.length());
                 }
-            }
-            else {
+            } else {
                 for (Aircraft aircraft : aircraftInOrder) {
                     aircraftsCallsign.append(aircraft.getCallsign()).append(",");
                 }
