@@ -209,7 +209,7 @@ public class ViewModel {
                 //currently selected aircraft's current task type
                 TaskType currentTask =
                         aircraft.getTaskList().getCurrentTask().getType();
-                if ( currentTask != TaskType.LAND) {
+                if (currentTask != TaskType.LAND) {
                     return;
                 }
                 try {
@@ -305,13 +305,14 @@ public class ViewModel {
                     encodedAircraftList.append(aircraft.encode()).append(System.lineSeparator());
                 }
                 //remove last line
-                encodedAircraftList.delete(encodedAircraftList.length() - 1, encodedAircraftList.length());
+                encodedAircraftList.delete(encodedAircraftList.length() - 1,
+                        encodedAircraftList.length());
+                aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s", numAircraft,
+                        encodedAircraftList));
+            } else {
+                aircraftWriter.write(String.format("%d", numAircraft));
             }
-
-            aircraftWriter.write(String.format("%d" + System.lineSeparator() + "%s",numAircraft,
-                    encodedAircraftList));
             aircraftWriter.close();
-
 
             //encodedTakeoffQueue
             TakeoffQueue takeoffQueue = new TakeoffQueue();
@@ -325,19 +326,22 @@ public class ViewModel {
             }
             //String reprsentation of callsignN:ticksRemainingN
             StringBuilder callsignTicks = new StringBuilder();
-            int numLoadingAircraft = tower.getLoadingAircraft().size() ;
+            int numLoadingAircraft = tower.getLoadingAircraft().size();
             if (numLoadingAircraft > 0) {
-                for (Map.Entry<Aircraft,Integer> entry : tower.getLoadingAircraft().entrySet()) {
+                for (Map.Entry<Aircraft, Integer> entry : tower.getLoadingAircraft().entrySet()) {
                     callsignTicks.append(entry.getKey().getCallsign()).append(":")
                             .append(entry.getValue()).append(",");
                 }
                 callsignTicks.delete(callsignTicks.length() - 1, callsignTicks.length());
+                queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s"
+                                + System.lineSeparator() + "LoadingAircraft:%d" + System.lineSeparator()
+                                + "%s", takeoffQueue.encode(), landingQueue.encode(), numLoadingAircraft,
+                        callsignTicks));
+            } else {
+                queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s"
+                                + System.lineSeparator() + "LoadingAircraft:%d",
+                        takeoffQueue.encode(), landingQueue.encode(), numLoadingAircraft));
             }
-
-            queuesWriter.write(String.format("%s" + System.lineSeparator() + "%s" + System.lineSeparator() +
-                            "LoadingAircraft:%d" + System.lineSeparator() + "%s",
-                    takeoffQueue.encode(), landingQueue.encode(), numLoadingAircraft,
-                    callsignTicks));
             queuesWriter.close();
 
             int numTerminals = tower.getTerminals().size();
@@ -347,11 +351,14 @@ public class ViewModel {
                     terminalsEncoded.append(terminal.encode()).append(System.lineSeparator());
                 }
                 terminalsEncoded.delete(terminalsEncoded.length() - 1, terminalsEncoded.length());
+                terminalsWithGatesWriter.write(String.format("%d" + System.lineSeparator() + "%s",
+                        numTerminals, terminalsEncoded));
+            } else {
+                terminalsWithGatesWriter.write(String.format("%d",
+                        numTerminals));
             }
-
-            terminalsWithGatesWriter.write(String.format("%d" + System.lineSeparator() + "%s",
-                    numTerminals, terminalsEncoded));
             terminalsWithGatesWriter.close();
+
         } catch (IOException e) {
             throw new IOException();
         }
