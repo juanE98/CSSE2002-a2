@@ -305,7 +305,7 @@ public class LandingQueueTest {
         assertFalse(this.landingQueuePassenger.containsAircraft(null));
 
     }
-
+//Extra tests not assessed-------------------------------------------------------------------------
     @Test
     public void toStringTestBasic() {
         this.landingQueueMix.addAircraft(aircraft1);
@@ -314,10 +314,20 @@ public class LandingQueueTest {
     }
 
     @Test
+    public void toStringTestNoAircraft() {
+        assertEquals("LandingQueue []", this.landingQueuePassenger.toString());
+    }
+
+    @Test
     public void encodeTestBasic() {
         this.landingQueueMix.addAircraft(aircraft1);
         this.landingQueueMix.addAircraft(aircraft3);
         assertEquals("LandingQueue:2" + System.lineSeparator()+ "ABC001,ABC003",
                 this.landingQueueMix.encode());
+    }
+
+    @Test
+    public void encodeTestNoAircraft() {
+        assertEquals("LandingQueue:0", this.landingQueuePassenger.encode());
     }
 }

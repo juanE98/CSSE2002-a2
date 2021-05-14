@@ -91,10 +91,14 @@ public abstract class AircraftQueue implements Encodable {
      */
     public String encode() {
         StringBuilder encodedString = new StringBuilder();
+        int numAircraft = this.getAircraftInOrder().size();
         encodedString.append(this.getClass().getSimpleName()).append(":")
-                .append(this.getAircraftInOrder().size());
-        encodedString.append(System.lineSeparator());
-        encodedString.append(this.callsignList(true));
+                .append(numAircraft);
+        //Only adds a new line if queue contains Aircrafts
+        if (numAircraft > 0) {
+            encodedString.append(System.lineSeparator());
+            encodedString.append(this.callsignList(true));
+        }
         return String.valueOf(encodedString);
     }
 
@@ -106,6 +110,7 @@ public abstract class AircraftQueue implements Encodable {
     private String callsignList(boolean encode) {
         StringBuilder aircraftsCallsign = new StringBuilder();
         List<Aircraft> aircraftInOrder = this.getAircraftInOrder();
+        //Check if queue contains Aircrafts
         if (aircraftInOrder != null && !(aircraftInOrder.isEmpty())) {
             if (!encode) {
                 for (Aircraft aircraft : aircraftInOrder) {

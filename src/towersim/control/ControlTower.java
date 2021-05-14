@@ -311,7 +311,7 @@ public class ControlTower implements Tickable {
                 this.loadingAircraft.remove(entry.getKey());
                 //aircraft leaves gate it is parked at
                 this.findGateOfAircraft(entry.getKey()).aircraftLeaves();
-                //aircraft moves to its next task 
+                //aircraft moves to its next task
                 entry.getKey().getTaskList().moveToNextTask();
             }
         }

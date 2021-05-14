@@ -24,18 +24,20 @@ public class TaskList {
     public TaskList(List<Task> tasks) {
         this.tasks = tasks;
         this.currentTaskIndex = 0;
+        //List argument cannot be empty.
         if (tasks.isEmpty()) {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < tasks.size(); i++) {
             TaskType currentTask = tasks.get(i).getType();
             TaskType nextTask;
+            //Only AWAY and WAIT can be in a TaskList of size 1.
             if (tasks.size() <= 1) {
                 if (!(currentTask == TaskType.AWAY || currentTask == TaskType.WAIT)) {
                     throw new IllegalArgumentException();
                 }
             }
-
+            //circles back to the first task if end of array is reached.
             if (i + 1 >= tasks.size()) {
                 nextTask = tasks.get(0).getType();
             } else {

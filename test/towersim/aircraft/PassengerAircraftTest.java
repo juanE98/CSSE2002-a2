@@ -200,4 +200,11 @@ public class PassengerAircraftTest {
         // (130 + 38) / capacity = 168 / 150 = 112 percent occupancy (should cap at 100)
         assertEquals(failMsg, 100, fullAircraft.calculateOccupancyLevel());
     }
+
+    @Test
+    public void encodeTest() {
+        assertEquals("ABC001:AIRBUS_A320:LOAD@0,TAKEOFF,AWAY,LAND:13600.00:false:150", aircraft1.encode());
+    }
+
+
 }

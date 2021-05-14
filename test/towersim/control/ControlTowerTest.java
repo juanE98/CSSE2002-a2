@@ -16,7 +16,9 @@ import towersim.tasks.TaskType;
 import towersim.util.NoSpaceException;
 import towersim.util.NoSuitableGateException;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -42,6 +44,10 @@ public class ControlTowerTest {
     private Aircraft passengerAircraftLoadingSingleTick;
     private Aircraft freightAircraftLoadingMultipleTicks;
     private ControlTower tower1;
+    private List<Aircraft> aircrafts;
+    private TakeoffQueue takeoffQueue;
+    private LandingQueue landingQueue;
+    private TreeMap<Aircraft, Integer> loadingAircraftMap;
 
     @Before
     public void setup() {
@@ -162,6 +168,12 @@ public class ControlTowerTest {
                 AircraftCharacteristics.AIRBUS_A320,
                 taskListAway,
                 AircraftCharacteristics.AIRBUS_A320.fuelCapacity, 120);
+        aircrafts = List.of(passengerAircraft1, passengerAircraft2, passengerAircraft3,
+                passengerAircraftTakingOff, passengerAircraftLoading);
+        takeoffQueue = new TakeoffQueue();
+        landingQueue = new LandingQueue();
+        loadingAircraftMap =
+                new TreeMap<>(Comparator.comparing(Aircraft::getCallsign));
 
 
     }
@@ -180,7 +192,7 @@ public class ControlTowerTest {
         tower.addTerminal(airplaneTerminal1);
 
         assertEquals("addTerminal() should add the given terminal to the list of terminals, "
-                + "and getTerminals() should return that list",
+                        + "and getTerminals() should return that list",
                 List.of(airplaneTerminal1),
                 tower.getTerminals());
     }
@@ -217,7 +229,7 @@ public class ControlTowerTest {
         }
 
         assertEquals("addAircraft() should add the given aircraft to the tower's list of aircraft, "
-                + "and getAircraft() should return that list",
+                        + "and getAircraft() should return that list",
                 List.of(passengerAircraft1, passengerAircraft2),
                 tower.getAircraft());
     }
@@ -229,7 +241,8 @@ public class ControlTowerTest {
             tower.addAircraft(passengerAircraft1);
             fail("Calling addAircraft() when there are no suitable gates should result in a "
                     + "NoSuitableGateException");
-        } catch (NoSuitableGateException expected) {}
+        } catch (NoSuitableGateException expected) {
+        }
     }
 
     @Test
@@ -270,17 +283,21 @@ public class ControlTowerTest {
         // passengerAircraft1 is an AIRPLANE, so can't be added to a helicopter terminal gate
         try {
             tower.findUnoccupiedGate(passengerAircraft1);
-            fail("findUnoccupiedGate() should throw a NoSuitableGateException if there is an unoccupied "
+            fail("findUnoccupiedGate() should throw a NoSuitableGateException if there is an " +
+                    "unoccupied "
                     + "gate but it is not in a terminal of the correct aircraft type");
-        } catch (NoSuitableGateException expected) {}
+        } catch (NoSuitableGateException expected) {
+        }
     }
 
     @Test
     public void findUnoccupiedGate_NoTerminalsTest() {
         try {
             tower.findUnoccupiedGate(passengerAircraft1);
-            fail("findUnoccupiedGate() should throw a NoSuitableGateException if there are no terminals");
-        } catch (NoSuitableGateException expected) {}
+            fail("findUnoccupiedGate() should throw a NoSuitableGateException if there are no " +
+                    "terminals");
+        } catch (NoSuitableGateException expected) {
+        }
     }
 
     @Test
@@ -295,10 +312,12 @@ public class ControlTowerTest {
                     + "NoSpaceException");
         }
         try {
-            assertEquals("findUnoccupiedGate() should return the first unoccupied gate in the first "
+            assertEquals("findUnoccupiedGate() should return the first unoccupied gate in the " +
+                    "first "
                     + "suitable terminal", gate1, tower.findUnoccupiedGate(passengerAircraft1));
         } catch (NoSuitableGateException e) {
-            fail("findUnoccupiedGate() should check all suitable terminals for unoccupied gates, even if "
+            fail("findUnoccupiedGate() should check all suitable terminals for unoccupied gates, " +
+                    "even if "
                     + "the first terminal encountered has no unoccupied gates");
         }
     }
@@ -315,10 +334,12 @@ public class ControlTowerTest {
 
         // passengerAircraft1 is an AIRPLANE, so airplaneTerminal1 is a suitable terminal
         try {
-            assertEquals("findUnoccupiedGate() should return the first suitable gate for the given aircraft",
+            assertEquals("findUnoccupiedGate() should return the first suitable gate for the " +
+                            "given aircraft",
                     gate1, tower.findUnoccupiedGate(passengerAircraft1));
         } catch (NoSuitableGateException e) {
-            fail("findUnoccupiedGate() should not throw a NoSuitableGateException if there is an unoccupied "
+            fail("findUnoccupiedGate() should not throw a NoSuitableGateException if there is an " +
+                    "unoccupied "
                     + "gate in a terminal of a suitable aircraft type");
         }
     }
@@ -363,7 +384,7 @@ public class ControlTowerTest {
         }
 
         assertEquals("findGateOfAircraft() should return the gate where the given aircraft is "
-                + "parked by searching all terminals until it is found", gate3,
+                        + "parked by searching all terminals until it is found", gate3,
                 tower.findGateOfAircraft(passengerAircraft2));
     }
 
@@ -389,7 +410,7 @@ public class ControlTowerTest {
         }
 
         assertNull("findGateOfAircraft() should return null if the given aircraft is not parked "
-                        + "at any gate", tower.findGateOfAircraft(passengerAircraft3));
+                + "at any gate", tower.findGateOfAircraft(passengerAircraft3));
     }
 
     @Test
@@ -425,8 +446,11 @@ public class ControlTowerTest {
     }
 
     @Test
-    public void loadAircraftTest() {
-
+    public void toStringTest() {
+        tower = new ControlTower(1, aircrafts, landingQueue, takeoffQueue, loadingAircraftMap);
+        tower.addTerminal(airplaneTerminal1);
+        assertEquals("ControlTower: 1 terminals, 5 total aircraft (0 LAND, 0 TAKEOFF, 0 LOAD)",
+                tower.toString());
     }
 
 

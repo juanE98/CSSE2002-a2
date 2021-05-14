@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import towersim.aircraft.Aircraft;
 import towersim.aircraft.AircraftCharacteristics;
+import towersim.aircraft.FreightAircraft;
 import towersim.aircraft.PassengerAircraft;
 import towersim.tasks.Task;
 import towersim.tasks.TaskList;
@@ -22,6 +23,7 @@ public class TerminalTest {
     private Gate gate2;
     private Gate gate3;
     private Aircraft aircraft;
+    private FreightAircraft helicopter;
 
     @Before
     public void setup() {
@@ -35,6 +37,10 @@ public class TerminalTest {
                         new Task(TaskType.LOAD), new Task(TaskType.TAKEOFF))),
                 AircraftCharacteristics.AIRBUS_A320.fuelCapacity,
                 AircraftCharacteristics.AIRBUS_A320.passengerCapacity);
+        this.helicopter = new FreightAircraft("HELI1",AircraftCharacteristics.SIKORSKY_SKYCRANE,new TaskList(List.of(new Task(TaskType.AWAY), new Task(TaskType.LAND),
+                new Task(TaskType.LOAD), new Task(TaskType.TAKEOFF))),
+                AircraftCharacteristics.SIKORSKY_SKYCRANE.fuelCapacity,
+                AircraftCharacteristics.SIKORSKY_SKYCRANE.freightCapacity);
     }
 
     @Test
@@ -274,5 +280,15 @@ public class TerminalTest {
         assertEquals("AirplaneTerminal:1:false:2" + System.lineSeparator() + "1:empty" +
                         System.lineSeparator() + "2:ABC123",
                 this.airplaneTerminal.encode());
+    }
+
+    @Test
+    public void encodeTest1() throws NoSpaceException {
+        this.helicopterTerminal.addGate(gate1);
+        this.gate2.parkAircraft(helicopter);
+        this.helicopterTerminal.addGate(gate2);
+        assertEquals("HelicopterTerminal:2:false:2" + System.lineSeparator() + "1:empty" +
+                        System.lineSeparator() + "2:HELI1",
+                this.helicopterTerminal.encode());
     }
 }

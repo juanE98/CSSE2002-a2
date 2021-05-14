@@ -103,6 +103,7 @@ public class ControlTowerInitialiser {
         String aircraftEncoded;
         try {
             numAircraft = Integer.parseInt(file.readLine());
+            //check if file contains aircrafts to read
             if (numAircraft > 0) {
                 while (((aircraftEncoded = file.readLine()) != null)) {
                     numAircraftRead++;
@@ -154,12 +155,16 @@ public class ControlTowerInitialiser {
     public static Aircraft readAircraft(String line) throws MalformedSaveException {
         String callsign;
         AircraftCharacteristics aircraftCharacteristics;
+        //TaskList read from file
         TaskList taskListEncoded;
         Double fuelAmount;
         boolean emergencyStatus;
+        // freight or passenger on the aircraft
         int cargo;
+        //Aircraft read from file
         Aircraft aircraftRead;
         String[] aircraftProperties = line.split(":");
+        //Aircraft properties must contain 6 parts separated by ":"
         if (aircraftProperties.length != 6) {
             throw new MalformedSaveException();
         }
@@ -553,6 +558,7 @@ public class ControlTowerInitialiser {
         Terminal terminalRead;
         String terminalType;
         int numGates = 0;
+        //4 parts expected
         int colonsExpected = 4;
         int terminalNumber;
         boolean emergencyStatus;
@@ -620,6 +626,7 @@ public class ControlTowerInitialiser {
     public static Gate readGate(String line, List<Aircraft> aircraft)
             throws MalformedSaveException {
         Gate gateRead;
+        //2 parts expected
         int colonsExpected = 2;
         int gateNumber;
         String space;

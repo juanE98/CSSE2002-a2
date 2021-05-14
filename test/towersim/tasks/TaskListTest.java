@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class TaskListTest {
     @Test
@@ -138,6 +139,70 @@ public class TaskListTest {
     }
 
     @Test
+    public void taskListValidTest() {
+        try {
+            TaskList list = new TaskList(List.of(new Task(TaskType.AWAY)));
+        } catch (IllegalArgumentException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void taskListValidTest1() {
+        try {
+            TaskList list = new TaskList(List.of(new Task(TaskType.LOAD)));
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    @Test
+    public void taskListValidTest2() {
+        try {
+            TaskList list = new TaskList(List.of(new Task(TaskType.LOAD)));
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    @Test
+    public void taskListInvalidValidTest1() {
+        try {
+            TaskList list = new TaskList(List.of(new Task(TaskType.AWAY),
+                    new Task(TaskType.LAND),
+                    new Task(TaskType.WAIT)));
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    @Test
+    public void taskListInvalidValidTest2() {
+        try {
+            TaskList list = new TaskList(List.of(new Task(TaskType.AWAY),
+                    new Task(TaskType.LAND)));
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    @Test
+    public void taskListInvalidValidTest3() {
+        try {
+            TaskList list = new TaskList(List.of(new Task(TaskType.LAND),
+                    new Task(TaskType.LAND),
+                    new Task(TaskType.WAIT)));
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    @Test
     public void encodeTest() {
         TaskList list = new TaskList(List.of(new Task(TaskType.AWAY),
                 new Task(TaskType.AWAY),
@@ -148,4 +213,17 @@ public class TaskListTest {
                 new Task(TaskType.TAKEOFF)));
         assertEquals("AWAY,AWAY,LAND,WAIT,WAIT,LOAD@0,TAKEOFF", list.encode());
     }
+
+    @Test
+    public void encodeTest2() {
+        TaskList list = new TaskList(List.of(new Task(TaskType.AWAY),
+                new Task(TaskType.AWAY),
+                new Task(TaskType.LAND),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.WAIT),
+                new Task(TaskType.LOAD,70),
+                new Task(TaskType.TAKEOFF)));
+        assertEquals("AWAY,AWAY,LAND,WAIT,WAIT,LOAD@70,TAKEOFF", list.encode());
+    }
+
 }
